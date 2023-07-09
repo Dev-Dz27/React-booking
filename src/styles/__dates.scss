@@ -1,0 +1,204 @@
+// NOTE: the order of these styles DO matter
+
+.DateInput_fang {
+  display: none;
+}
+
+.DateRangePicker {
+  @apply w-full mt-auto h-full;
+}
+
+.DateRangePickerInput {
+  background-color: transparent;
+}
+
+.DateRangePickerInput_arrow {
+  @apply hidden;
+}
+
+body .DateRangePickerInput_clearDates,
+body .SingleDatePickerInput_clearDate {
+  @apply z-30 w-6 h-6 p-0 flex items-center justify-center;
+}
+
+.DateInput {
+  @apply z-10 opacity-0 border border-red-500;
+  input {
+    @apply h-full w-full;
+  }
+}
+
+.StayDatesRangeInput,
+.ExperiencesDateSingleInput {
+  .DateInput {
+    @apply absolute top-0 h-1/2 lg:h-full lg:bottom-0 left-0 w-full lg:w-1/2;
+    & ~ .DateInput {
+      @apply top-auto lg:top-0 bottom-0 lg:left-auto right-0;
+    }
+  }
+}
+
+.RentalCarDatesRangeInput {
+  @apply flex;
+  .DateInput {
+    @apply absolute top-0 bottom-0 left-0 w-1/2 z-20;
+    & ~ .DateInput {
+      @apply top-0 bottom-0 left-auto right-0;
+    }
+  }
+  &.RentalCarDetailPageDatesRangeInput {
+    .DateInput {
+      @apply absolute top-0 h-1/2 left-0 w-full z-20;
+      & ~ .DateInput {
+        @apply top-auto bottom-0 right-0;
+      }
+    }
+  }
+}
+
+.nc-ListingStayDetailPage__stayDatesRangeInput {
+  .DateInput {
+    @apply absolute top-0 bottom-0 h-full left-0 w-1/2 z-20;
+    & ~ .DateInput {
+      @apply top-0 bottom-0 left-auto right-0;
+    }
+  }
+}
+
+.nc-date-not-focusedInput {
+  .DateRangePickerInput .DateRangePickerInput_clearDates,
+  .SingleDatePickerInput_clearDate {
+    opacity: 0 !important;
+  }
+}
+
+.DateRangePickerInput > * {
+  &.DateRangePickerInput_clearDates {
+    @apply z-20;
+  }
+}
+
+//
+.SingleDatePicker {
+  @apply w-full mt-auto h-full;
+  .DateInput {
+    @apply w-full h-full inset-0 #{!important};
+  }
+  .SingleDatePickerInput_clearDate {
+    @apply z-20;
+  }
+}
+
+.SingleDatePickerInput {
+  background: transparent;
+}
+//
+
+.DayPickerNavigation_button__horizontalDefault {
+  @apply p-0 flex items-center justify-center w-9 h-9 rounded-full bg-transparent text-neutral-700 dark:text-neutral-200 focus:bg-transparent;
+  svg {
+    fill: currentColor;
+  }
+}
+
+.DayPickerNavigation_svg__horizontal {
+  @apply w-4 h-4;
+}
+
+.CalendarMonth_caption {
+  @apply mb-3;
+}
+.CalendarMonth_caption strong {
+  @apply font-semibold text-neutral-800 dark:text-neutral-100;
+}
+.DayPicker_weekHeader {
+  @apply text-neutral-500 dark:text-neutral-400;
+}
+.DateRangePicker_picker,
+.SingleDatePicker_picker {
+  @apply top-full mt-3 #{!important};
+}
+
+.SingleDatePicker_picker,
+.DateRangePicker_picker,
+.CalendarMonthGrid,
+.CalendarMonth {
+  background-color: transparent !important;
+}
+.DayPicker__withBorder,
+.DateRangePicker_picker {
+  @apply bg-white dark:bg-neutral-800 shadow-xl rounded-3xl #{!important};
+}
+
+.CalendarDay__default.CalendarDay__blocked_out_of_range,
+.CalendarDay__default.CalendarDay__blocked_out_of_range:active,
+.CalendarDay__default.CalendarDay__blocked_out_of_range:hover {
+  @apply border border-transparent hover:bg-transparent text-neutral-300 dark:text-neutral-500 cursor-default;
+}
+
+// Will edit everything selected including everything between a range of dates
+.CalendarDay__default {
+  @apply w-12 h-12 border border-transparent bg-transparent text-neutral-800 dark:text-neutral-200;
+  &:hover {
+    @apply bg-neutral-200 border border-neutral-200 dark:bg-neutral-700 dark:border-neutral-700;
+  }
+}
+
+.CalendarDay__selected,
+.CalendarDay__selected:active,
+.CalendarDay__selected:hover {
+  @apply bg-neutral-800 dark:bg-neutral-300 border border-neutral-800 text-neutral-100 dark:text-neutral-900;
+}
+
+// Will edit when the second date (end date) in a range of dates
+// is not yet selected. Edits the dates between your mouse and said date
+.CalendarDay__hovered_span:hover,
+.CalendarDay__hovered_span,
+.CalendarDay__selected_span {
+  @apply bg-neutral-100 dark:bg-neutral-700 border border-neutral-100 dark:border-neutral-700 text-neutral-700;
+}
+
+.CalendarDay__selected_span:hover {
+  @apply bg-neutral-200 dark:bg-neutral-6000 border-neutral-200 dark:border-neutral-6000 text-neutral-700 dark:text-neutral-100;
+}
+
+//
+.listingSection__wrap__DayPickerRangeController {
+  .DayPicker__withBorder {
+    @apply shadow-none mx-auto xl:ml-0  border-neutral-200 dark:border-neutral-700 rounded-xl dark:bg-transparent;
+  }
+}
+
+//
+.nc-SetYourAvailabilityData {
+  .CalendarDay__highlighted_calendar {
+    @apply bg-neutral-200 dark:bg-neutral-6000 border-neutral-200 dark:border-neutral-6000 text-neutral-700 dark:text-neutral-100 relative;
+    &::after {
+      content: "";
+      width: 1px;
+      height: 30px;
+      left: 50%;
+      transform: rotate(-40deg);
+      background-color: black;
+      position: absolute;
+    }
+  }
+}
+
+//
+.HeroSearchFormMobile__Dialog {
+  .DayPicker {
+    @apply min-w-full shadow-none;
+  }
+
+  .CalendarMonth_caption {
+    @apply text-base pt-4;
+  }
+
+  .DayPickerNavigation_button__verticalDefault {
+    @apply inline-flex items-center justify-center shadow-none dark:bg-neutral-800 dark:border-neutral-700;
+    svg {
+      @apply w-6 dark:fill-white;
+    }
+  }
+}
