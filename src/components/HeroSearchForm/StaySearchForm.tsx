@@ -41,17 +41,6 @@ const StaySearchForm: FC<StaySearchFormProps> = ({
     null
   );
 
-  console.log(
-    "location: ",
-    locationInputValue,
-    "date: ",
-    dateRangeValue,
-    "Guest: ",
-    guestValue,
-    "wide"
-  );
-
-
   //
   useEffect(() => {
     if (haveDefaultValue) {
@@ -61,17 +50,13 @@ const StaySearchForm: FC<StaySearchFormProps> = ({
     }
   }, []);
   //
-// Get the new selected location on change
-  const handleLocationChange = (location: string) => {
-    setLocationInputValue(location);
-  };
 
   const renderForm = () => {
     return (
       <form className="w-full relative mt-8 flex rounded-full shadow-xl dark:shadow-2xl bg-white dark:bg-neutral-800 ">
         <LocationInput
           defaultValue={locationInputValue}
-          onChange={handleLocationChange}
+          onChange={(e) => setLocationInputValue(e)}
           onInputDone={() => setDateFocused("startDate")}
           className="flex-[1.5]"
         />
