@@ -66,6 +66,7 @@ const LocationInput: FC<LocationInputProps> = ({
   const handleSelectLocation = (item: string) => {
     setValue(item);
     onInputDone && onInputDone(item);
+    onChange && onChange(item); // pass the new location to the parent component(StaySearchForm) 
     setShowPopover(false);
   };
 

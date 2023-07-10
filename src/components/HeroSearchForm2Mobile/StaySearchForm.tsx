@@ -20,6 +20,9 @@ const StaySearchForm = () => {
     startDate: null,
     endDate: null,
   });
+  // console.log(
+  //   "location: ", locationInputTo, 
+  //   "date: ",dateRangeValue, "small")
 
   const renderInputLocation = () => {
     const isActive = fieldNameShow === "location";
