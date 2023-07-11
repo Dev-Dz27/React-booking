@@ -5,6 +5,9 @@ import { FocusedInputShape } from "react-dates";
 import StayDatesRangeInput from "./StayDatesRangeInput";
 import moment from "moment";
 import { FC } from "react";
+import { useDispatch } from "react-redux";
+import { setLocation, setDateRange, setGuests } from "../../features/bookingSlice";
+import { BookingState } from "../../features/bookingSlice";
 
 export interface DateRage {
   startDate: moment.Moment | null;
@@ -14,6 +17,12 @@ export interface DateRage {
 export interface StaySearchFormProps {
   haveDefaultValue?: boolean;
 }
+
+type GuestsObject = {
+  guestAdults?: number;
+  guestChildren?: number;
+  guestInfants?: number;
+};
 
 // DEFAULT DATA FOR ARCHIVE PAGE
 const defaultLocationValue = "Tokyo, Jappan";
@@ -35,11 +44,13 @@ const StaySearchForm: FC<StaySearchFormProps> = ({
     endDate: null,
   });
   const [locationInputValue, setLocationInputValue] = useState("");
-  const [guestValue, setGuestValue] = useState({});
+  const [guestValue, setGuestValue] = useState<GuestsObject>({});
 
   const [dateFocused, setDateFocused] = useState<FocusedInputShape | null>(
     null
   );
+
+  const dispatch = useDispatch();
 
   console.log(
     "location: ",
@@ -51,8 +62,6 @@ const StaySearchForm: FC<StaySearchFormProps> = ({
     "wide"
   );
 
-
-  //
   useEffect(() => {
     if (haveDefaultValue) {
       setDateRangeValue(defaultDateRange);
@@ -60,10 +69,30 @@ const StaySearchForm: FC<StaySearchFormProps> = ({
       setGuestValue(defaultGuestValue);
     }
   }, []);
-  //
-// Get the new selected location on change
+
   const handleLocationChange = (location: string) => {
     setLocationInputValue(location);
+    dispatch(setLocation(location));
+  };
+
+  const handleDateRangeChange = (dateRange: DateRage) => {
+    setDateRangeValue(dateRange);
+    const serializedRange: DateRage  = {
+      startDate: dateRange.startDate ? moment(dateRange.startDate) : null,
+      endDate: dateRange.endDate ? moment(dateRange.endDate) : null,
+    };
+    dispatch(setDateRange(serializedRange));
+  };
+  
+
+  const handleGuestsChange = (data: GuestsObject) => {
+    const guests: BookingState["guests"] = {
+      guestAdults: data.guestAdults ?? 0,
+      guestChildren: data.guestChildren ?? 0,
+      guestInfants: data.guestInfants ?? 0,
+    };
+    setGuestValue(data);
+    dispatch(setGuests(guests));
   };
 
   const renderForm = () => {
@@ -78,12 +107,12 @@ const StaySearchForm: FC<StaySearchFormProps> = ({
         <StayDatesRangeInput
           defaultValue={dateRangeValue}
           defaultFocus={dateFocused}
-          onChange={(data) => setDateRangeValue(data)}
+          onChange={handleDateRangeChange}
           className="flex-[2]"
         />
         <GuestsInput
           defaultValue={guestValue}
-          onChange={(data) => setGuestValue(data)}
+          onChange={handleGuestsChange}
           className="flex-[1.2]"
         />
       </form>

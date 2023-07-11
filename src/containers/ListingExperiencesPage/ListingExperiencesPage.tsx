@@ -82,7 +82,7 @@ const ListingExperiencesPage: FC<ListingExperiencesPageProps> = ({
         {/* SECTION HERO */}
         <SectionHeroArchivePage
           currentPage="Experiences"
-          currentTab="Experiences"
+          // currentTab="Experiences"
           listingType={
             <>
               <i className="text-2xl las la-umbrella-beach"></i>

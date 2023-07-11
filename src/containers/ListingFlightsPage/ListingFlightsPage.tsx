@@ -81,7 +81,7 @@ const ListingFlightsPage: FC<ListingFlightsPageProps> = ({
         {/* SECTION HERO */}
         <SectionHeroArchivePage
           currentPage="Flights"
-          currentTab="Flights"
+          // currentTab="Flights"
           listingType={
             <>
               <i className="text-2xl las la-plane-departure"></i>

@@ -1,77 +1,122 @@
-import React, { FC, useState } from "react";
-import ExperiencesSearchForm from "./ExperiencesSearchForm";
-import StaySearchForm from "./StaySearchForm";
-import RentalCarSearchForm from "./RentalCarSearchForm";
-import FlightSearchForm from "./FlightSearchForm";
+import React, { useEffect, useState } from "react";
+import LocationInput from "./LocationInput";
+import GuestsInput, { GuestsInputProps } from "./GuestsInput";
+import { FocusedInputShape } from "react-dates";
+import StayDatesRangeInput from "./StayDatesRangeInput";
+import moment from "moment";
+import { FC } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setLocation, setDateRange, setGuests } from "../../features/bookingSlice";
+import { RootState } from "../../features/store";
 
-export type SearchTab = "Stays" | "Experiences" | "Cars" | "Flights";
-
-export interface HeroSearchFormProps {
-  className?: string;
-  currentTab?: SearchTab;
-  currentPage?: "Stays" | "Experiences" | "Cars" | "Flights";
+export interface DateRage {
+  startDate: moment.Moment | null;
+  endDate: moment.Moment | null;
 }
 
-const HeroSearchForm: FC<HeroSearchFormProps> = ({
-  className = "",
-  currentTab = "Stays",
-  currentPage,
-}) => {
-  const tabs: SearchTab[] = ["Stays", "Experiences", "Cars", "Flights"];
-  const [tabActive, setTabActive] = useState<SearchTab>(currentTab);
+export interface StaySearchFormProps {
+  haveDefaultValue?: boolean;
+}
 
-  const renderTab = () => {
-    return (
-      <ul className="ml-2 sm:ml-6 md:ml-12 flex space-x-5 sm:space-x-8 lg:space-x-11 overflow-x-auto hiddenScrollbar">
-        {tabs.map((tab) => {
-          const active = tab === tabActive;
-          return (
-            <li
-              onClick={() => setTabActive(tab)}
-              className={`flex-shrink-0 flex items-center cursor-pointer text-sm lg:text-base font-medium ${
-                active
-                  ? ""
-                  : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-400"
-              } `}
-              key={tab}
-            >
-              {active && (
-                <span className="block w-2.5 h-2.5 rounded-full bg-neutral-800 dark:bg-neutral-100 mr-2" />
-              )}
-              <span>{tab}</span>
-            </li>
-          );
-        })}
-      </ul>
-    );
+type GuestsObject = {
+  guestAdults?: number;
+  guestChildren?: number;
+  guestInfants?: number;
+};
+
+// DEFAULT DATA FOR ARCHIVE PAGE
+const defaultLocationValue = "Tokyo, Jappan";
+const defaultDateRange = {
+  startDate: moment(),
+  endDate: moment().add(4, "days"),
+};
+const defaultGuestValue: GuestsInputProps["defaultValue"] = {
+  guestAdults: 2,
+  guestChildren: 2,
+  guestInfants: 1,
+};
+
+const StaySearchForm: FC<StaySearchFormProps> = ({
+  haveDefaultValue = false,
+}) => {
+  const [dateRangeValue, setDateRangeValue] = useState<DateRage>({
+    startDate: null,
+    endDate: null,
+  });
+  const [locationInputValue, setLocationInputValue] = useState("");
+  const [guestValue, setGuestValue] = useState<GuestsObject>({});
+
+  const [dateFocused, setDateFocused] = useState<FocusedInputShape | null>(
+    null
+  );
+
+  const dispatch = useDispatch();
+  const { location, dateRange, guests } = useSelector(
+    (state: RootState) => state.booking
+  );
+
+  useEffect(() => {
+    if (haveDefaultValue) {
+      setDateRangeValue(defaultDateRange);
+      setLocationInputValue(defaultLocationValue);
+      setGuestValue(defaultGuestValue);
+    } else if (location || dateRange || guests) {
+      setDateRangeValue(dateRange);
+      setLocationInputValue(location);
+      setGuestValue(guests);
+    }
+  }, []);
+
+  const handleLocationChange = (location: string) => {
+    setLocationInputValue(location);
+    dispatch(setLocation(location));
+  };
+
+  const handleDateRangeChange = (dateRange: DateRage) => {
+    setDateRangeValue(dateRange);
+    const serializedRange: DateRage  = {
+      startDate: dateRange.startDate ? moment(dateRange.startDate) : null,
+      endDate: dateRange.endDate ? moment(dateRange.endDate) : null,
+    };
+    dispatch(setDateRange(serializedRange));
+  };
+  
+
+  const handleGuestsChange = (data: GuestsObject) => {
+    const guests = {
+      guestAdults: data.guestAdults ?? 0,
+      guestChildren: data.guestChildren ?? 0,
+      guestInfants: data.guestInfants ?? 0,
+    };
+    setGuestValue(data);
+    dispatch(setGuests(guests));
   };
 
   const renderForm = () => {
-    const isArchivePage = !!currentPage && !!currentTab;
-    switch (tabActive) {
-      case "Stays":
-        return <StaySearchForm haveDefaultValue={isArchivePage} />;
-      case "Experiences":
-        return <ExperiencesSearchForm haveDefaultValue={isArchivePage} />;
-      case "Cars":
-        return <RentalCarSearchForm haveDefaultValue={isArchivePage} />;
-      case "Flights":
-        return <FlightSearchForm haveDefaultValue={isArchivePage} />;
-
-      default:
-        return null;
-    }
+    return (
+      <form className="w-full relative mt-8 flex rounded-full shadow-xl dark:shadow-2xl bg-white dark:bg-neutral-800 ">
+        <LocationInput
+          defaultValue={locationInputValue}
+          onChange={handleLocationChange}
+          onInputDone={() => setDateFocused("startDate")}
+          className="flex-[1.5]"
+        />
+        <StayDatesRangeInput
+          defaultValue={dateRangeValue}
+          defaultFocus={dateFocused}
+          onChange={handleDateRangeChange}
+          className="flex-[2]"
+        />
+        <GuestsInput
+          defaultValue={guestValue}
+          onChange={handleGuestsChange}
+          className="flex-[1.2]"
+        />
+      </form>
+    );
   };
 
-  return (
-    <div
-      className={`nc-HeroSearchForm w-full max-w-6xl py-5 lg:py-0 ${className}`}
-      data-nc-id="HeroSearchForm"
-    >
-      {renderTab()}
-      {renderForm()}
-    </div>
-  );
+  return renderForm();
 };
 
-export default HeroSearchForm;
+export default StaySearchForm;
