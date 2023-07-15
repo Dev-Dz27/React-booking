@@ -8,6 +8,8 @@ import Checkbox from "shared/Checkbox/Checkbox";
 import Pagination from "shared/Pagination/Pagination";
 import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
+import { useSelector } from "react-redux";
+import { BookingState } from "features/bookingSlice";
 
 const DEMO_STAYS = DEMO_STAY_LISTINGS.filter((_, i) => i < 12);
 
@@ -17,6 +19,15 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
   const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
   const [showFullMapFixed, setShowFullMapFixed] = useState(false);
 
+
+  // Redux Toolkit
+  const bookingState = useSelector((state: { booking: BookingState }) => state.booking);
+
+  const locationValue = bookingState.location;
+
+  console.log(locationValue)
+
+
   return (
     <div>
       <div className="relative flex min-h-screen">
@@ -24,7 +35,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
         <div className="min-h-screen w-full xl:w-[780px] 2xl:w-[880px] flex-shrink-0 xl:px-8 ">
           <Heading2 />
           <div className="mb-8 lg:mb-11">
-            <TabFilters />
+            {/* <TabFilters /> */}
           </div>
           <div className="grid grid-cols-1 gap-8">
             {DEMO_STAYS.map((item) => (

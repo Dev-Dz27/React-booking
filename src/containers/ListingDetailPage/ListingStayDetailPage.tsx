@@ -4,8 +4,8 @@ import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import LocationMarker from "components/AnyReactComponent/LocationMarker";
 import CommentListing from "components/CommentListing/CommentListing";
 import FiveStartIconForRate from "components/FiveStartIconForRate/FiveStartIconForRate";
-import GuestsInput from "components/HeroSearchForm/GuestsInput";
-import { DateRage } from "components/HeroSearchForm/StaySearchForm";
+import GuestsInput, { GuestsInputProps }  from "components/HeroSearchForm/GuestsInput";
+import { DateRage } from "data/types"; 
 import StartRating from "components/StartRating/StartRating";
 import GoogleMapReact from "google-map-react";
 import useWindowSize from "hooks/useWindowResize";
@@ -30,6 +30,10 @@ import SectionSliderNewCategories from "components/SectionSliderNewCategories/Se
 import SectionSubscribe2 from "components/SectionSubscribe2/SectionSubscribe2";
 import StayDatesRangeInput from "components/HeroSearchForm/StayDatesRangeInput";
 import MobileFooterSticky from "./MobileFooterSticky";
+// Redux Toolkit
+import { useSelector, useDispatch } from 'react-redux';
+import { setDateRange, setGuests } from "features/bookingSlice";
+
 
 export interface ListingStayDetailPageProps {
   className?: string;
@@ -84,13 +88,22 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openFocusIndex, setOpenFocusIndex] = useState(0);
-  const [selectedDate, setSelectedDate] = useState<DateRage>({
-    startDate: moment().add(4, "days"),
-    endDate: moment().add(10, "days"),
-  });
+  // const [selectedDate, setSelectedDate] = useState<DateRage>({
+  //   startDate: moment().add(4, "days"),
+  //   endDate: moment().add(10, "days"),
+  // });
   const [focusedInputSectionCheckDate, setFocusedInputSectionCheckDate] =
     useState<FocusedInputShape>("startDate");
   let [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
+
+
+  // Redux Toolkit
+  const bookingState = useSelector((state: any) => state.booking);
+  const selectedDate = bookingState.dateRange;
+const guestValue = bookingState.guests;
+
+const dispatch = useDispatch();
+  // Redux Toolkit
 
   const windowSize = useWindowSize();
 
@@ -382,10 +395,10 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
 
         <div className="listingSection__wrap__DayPickerRangeController flow-root">
           <div className="-mx-4 sm:mx-auto xl:mx-[-22px]">
-            <DayPickerRangeController
+            {/* <DayPickerRangeController
               startDate={selectedDate.startDate}
               endDate={selectedDate.endDate}
-              onDatesChange={(date) => setSelectedDate(date)}
+              // onDatesChange={(date) => setSelectedDate(date)}
               focusedInput={focusedInputSectionCheckDate}
               onFocusChange={(focusedInput) =>
                 setFocusedInputSectionCheckDate(focusedInput || "startDate")
@@ -395,7 +408,21 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
               daySize={getDaySize()}
               hideKeyboardShortcutsPanel={false}
               isOutsideRange={(day) => !isInclusivelyAfterDay(day, moment())}
-            />
+            /> */}
+             <DayPickerRangeController
+        startDate={selectedDate.startDate}
+        endDate={selectedDate.endDate}
+        onDatesChange={(date) => dispatch(setDateRange(date))}
+        focusedInput={focusedInputSectionCheckDate}
+        onFocusChange={(focusedInput) =>
+          setFocusedInputSectionCheckDate(focusedInput || "startDate")
+        }
+        initialVisibleMonth={null}
+        numberOfMonths={windowSize.width < 1280 ? 1 : 2}
+        daySize={getDaySize()}
+        hideKeyboardShortcutsPanel={false}
+        isOutsideRange={(day) => !isInclusivelyAfterDay(day, moment())}
+      />
           </div>
         </div>
       </div>
@@ -647,7 +674,8 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
         <form className="flex flex-col border border-neutral-200 dark:border-neutral-700 rounded-3xl ">
           <StayDatesRangeInput
             wrapClassName="divide-x divide-neutral-200 dark:divide-neutral-700 !grid-cols-1 sm:!grid-cols-2"
-            onChange={(date) => setSelectedDate(date)}
+            // onChange={(date) => setSelectedDate(date)}
+             onChange={(date) => dispatch(setDateRange(date))}
             fieldClassName="p-3"
             defaultValue={selectedDate}
             anchorDirection={"right"}
@@ -657,12 +685,15 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
           <GuestsInput
             className="nc-ListingStayDetailPage__guestsInput flex-1"
             fieldClassName="p-3"
-            defaultValue={{
-              guestAdults: 1,
-              guestChildren: 2,
-              guestInfants: 0,
-            }}
+            // defaultValue={{
+            //   guestAdults: 1,
+            //   guestChildren: 2,
+            //   guestInfants: 0,
+            // }}
+            defaultValue={guestValue}
             hasButtonSubmit={false}
+            onChange={(guests: any ) => dispatch(setGuests(guests))}
+
           />
         </form>
 

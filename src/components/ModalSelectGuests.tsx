@@ -5,24 +5,28 @@ import GuestsInput, {
 } from "components/HeroSearchForm2Mobile/GuestsInput";
 import React, { FC, Fragment, useState } from "react";
 import ButtonPrimary from "shared/Button/ButtonPrimary";
+import { useDispatch, useSelector } from "react-redux";
+import { setGuests, BookingState } from "../features/bookingSlice"; // Update the path to your bookingSlice file
 
 interface ModalSelectGuestsProps {
   onClose?: () => void;
-  onChangeGuests: (date: GuestsObject) => void;
   defaultValue: GuestsObject;
+
   renderChildren?: (p: { openModal: () => void }) => React.ReactNode;
 }
 
 const ModalSelectGuests: FC<ModalSelectGuestsProps> = ({
   defaultValue,
   onClose,
-  onChangeGuests,
   renderChildren,
 }) => {
   const [showModal, setShowModal] = useState(false);
 
-  // FOR RESET ALL DATA WHEN CLICK CLEAR BUTTON
-  //
+  const dispatch = useDispatch();
+  const guests = useSelector(
+    (state: { booking: BookingState }) => state.booking.guests
+  );
+
   function closeModal() {
     setShowModal(false);
   }
@@ -39,6 +43,9 @@ const ModalSelectGuests: FC<ModalSelectGuestsProps> = ({
     );
   };
 
+  const handleGuestsChange = (guests: any) => {
+    dispatch(setGuests(guests));
+  };
   return (
     <>
       {renderButtonOpenModal()}
@@ -78,7 +85,7 @@ const ModalSelectGuests: FC<ModalSelectGuestsProps> = ({
                           >
                             <GuestsInput
                               defaultValue={defaultValue}
-                              onChange={onChangeGuests}
+                              onChange={handleGuestsChange}
                             />
                           </div>
                         </div>
@@ -89,7 +96,7 @@ const ModalSelectGuests: FC<ModalSelectGuestsProps> = ({
                         type="button"
                         className="underline font-semibold flex-shrink-0"
                         onClick={() => {
-                          onChangeGuests({
+                          handleGuestsChange({
                             guestAdults: 0,
                             guestChildren: 0,
                             guestInfants: 0,

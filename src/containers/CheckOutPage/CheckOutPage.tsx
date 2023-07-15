@@ -12,10 +12,14 @@ import StartRating from "components/StartRating/StartRating";
 import NcModal from "shared/NcModal/NcModal";
 import ModalSelectDate from "components/ModalSelectDate";
 import moment from "moment";
-import { DateRage } from "components/HeroSearchForm/StaySearchForm";
+import { DateRage } from "data/types";
 import converSelectedDateToString from "utils/converSelectedDateToString";
 import ModalSelectGuests from "components/ModalSelectGuests";
 import { GuestsObject } from "components/HeroSearchForm2Mobile/GuestsInput";
+// Redux 
+import { useSelector, useDispatch } from "react-redux";
+import { setDateRange, BookingState } from "../../features/bookingSlice"; // Update the path to your bookingSlice file
+
 
 export interface CheckOutPageProps {
   className?: string;
@@ -31,6 +35,20 @@ const CheckOutPage: FC<CheckOutPageProps> = ({ className = "" }) => {
     guestChildren: 1,
     guestInfants: 1,
   });
+
+  // Redux Toolkit
+  const dispatch = useDispatch();
+  const bookingState = useSelector((state: { booking: BookingState }) => state.booking);
+
+  const guestValue = bookingState.guests;
+  const selectedDate = bookingState.dateRange;
+
+  const handleDateChange = (dates: DateRage) => {
+    dispatch(setDateRange(dates));
+  };
+
+  // Redux Toolkit
+
 
   const renderSidebar = () => {
     return (
@@ -103,18 +121,18 @@ const CheckOutPage: FC<CheckOutPageProps> = ({ className = "" }) => {
           </div>
           <div className="mt-6 border border-neutral-200 dark:border-neutral-700 rounded-3xl flex flex-col sm:flex-row divide-y sm:divide-x sm:divide-y-0 divide-neutral-200 dark:divide-neutral-700">
             <ModalSelectDate
-              defaultValue={rangeDates}
-              onSelectDate={setRangeDates}
-              renderChildren={({ openModal }) => (
-                <button
-                  onClick={openModal}
-                  className="text-left flex-1 p-5 flex justify-between space-x-5 "
-                  type="button"
+             defaultValue={selectedDate}
+    onSelectDate={handleDateChange}
+    renderChildren={({ defaultValue, openModal }) => (
+      <button
+        onClick={openModal}
+        className="text-left flex-1 p-5 flex justify-between space-x-5 "
+        type="button"
                 >
                   <div className="flex flex-col">
                     <span className="text-sm text-neutral-400">Date</span>
                     <span className="mt-1.5 text-lg font-semibold">
-                      {converSelectedDateToString(rangeDates)}
+                    {converSelectedDateToString(selectedDate)}
                     </span>
                   </div>
                   <PencilSquareIcon className="w-6 h-6 text-neutral-6000 dark:text-neutral-400" />
@@ -123,8 +141,8 @@ const CheckOutPage: FC<CheckOutPageProps> = ({ className = "" }) => {
             />
 
             <ModalSelectGuests
-              defaultValue={guests}
-              onChangeGuests={setGuests}
+              defaultValue={guestValue}
+              // onChangeGuests={setGuests}
               renderChildren={({ openModal }) => (
                 <button
                   type="button"
@@ -136,9 +154,9 @@ const CheckOutPage: FC<CheckOutPageProps> = ({ className = "" }) => {
                     <span className="mt-1.5 text-lg font-semibold">
                       <span className="line-clamp-1">
                         {`${
-                          (guests.guestAdults || 0) +
-                          (guests.guestChildren || 0)
-                        } Guests, ${guests.guestInfants || 0} Infants`}
+                          (guestValue.guestAdults || 0) +
+                          (guestValue.guestChildren || 0)
+                        } Guests, ${guestValue.guestInfants || 0} Infants`}
                       </span>
                     </span>
                   </div>
