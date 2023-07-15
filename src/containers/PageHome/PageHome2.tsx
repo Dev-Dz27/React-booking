@@ -171,7 +171,7 @@ function PageHome2() {
           categoryCardType="card4"
           itemPerRow={4}
           heading="Suggestions for discovery"
-          subHeading="Popular places to stay that Chisfis recommends for you"
+          subHeading="Popular places to stay that Chis recommends for you"
           uniqueClassName="PageHome2_s1"
         />
 

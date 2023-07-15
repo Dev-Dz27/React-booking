@@ -24,21 +24,21 @@ const DEMO_DATA = [
     clientName: "Tiana Abie",
     clientAddress: "Malaysia",
     content:
-      "This place is exactly like the picture posted on Chisfis. Great service, we had a great stay!",
+      "This place is exactly like the picture posted on Chis. Great service, we had a great stay!",
   },
   {
     id: 2,
     clientName: "Lennie Swiffan",
     clientAddress: "London",
     content:
-      "This place is exactly like the picture posted on Chisfis. Great service, we had a great stay!",
+      "This place is exactly like the picture posted on Chis. Great service, we had a great stay!",
   },
   {
     id: 3,
     clientName: "Berta Emili",
     clientAddress: "Tokyo",
     content:
-      "This place is exactly like the picture posted on Chisfis. Great service, we had a great stay!",
+      "This place is exactly like the picture posted on Chis. Great service, we had a great stay!",
   },
 ];
 
@@ -92,7 +92,7 @@ const SectionClientSay: FC<SectionClientSayProps> = ({
       className={`nc-SectionClientSay relative ${className} `}
       data-nc-id="SectionClientSay"
     >
-      <Heading desc="Let's see what people think of Chisfis" isCenter>
+      <Heading desc="Let's see what people think of Chis" isCenter>
         Good news from far away
       </Heading>
       <div className="relative md:mb-16 max-w-2xl mx-auto">

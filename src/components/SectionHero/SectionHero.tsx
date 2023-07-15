@@ -19,7 +19,7 @@ const SectionHero: FC<SectionHeroProps> = ({ className = "" }) => {
             Hotel, car & experiences
           </h2>
           <span className="text-base md:text-lg text-neutral-500 dark:text-neutral-400">
-            Accompanying us, you have a trip full of experiences. With Chisfis,
+            Accompanying us, you have a trip full of experiences. With Chis,
             booking accommodation, resort villas, hotels
           </span>
           <ButtonPrimary>Start your search</ButtonPrimary>

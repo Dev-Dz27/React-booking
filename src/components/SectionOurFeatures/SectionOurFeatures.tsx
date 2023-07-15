@@ -48,7 +48,7 @@ const SectionOurFeatures: FC<SectionOurFeaturesProps> = ({
           <li className="space-y-4">
             <Badge color="green" name="Exposure " />
             <span className="block text-xl font-semibold">
-              Reach millions with Chisfis
+              Reach millions with Chis
             </span>
             <span className="block mt-5 text-neutral-500 dark:text-neutral-400">
               Millions of people are searching for unique places to stay around

@@ -21,15 +21,16 @@ const ListingStayMapPage: FC<ListingStayMapPageProps> = ({
       data-nc-id="ListingStayMapPage"
     >
       <Helmet>
-        <title>Chisfis || Booking React Template</title>
+        <title>Chis || Booking React Template</title>
       </Helmet>
       <BgGlassmorphism />
 
       {/* SECTION HERO */}
       <div className="container pt-10 pb-24 lg:pt-16 lg:pb-28">
-        <SectionHeroArchivePage currentPage="Stays"
-        //  currentTab="Stays"
-          />
+        <SectionHeroArchivePage
+          currentPage="Stays"
+          //  currentTab="Stays"
+        />
       </div>
 
       {/* SECTION */}
