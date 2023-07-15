@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { DateRage } from "components/HeroSearchForm/StaySearchForm";
+import { DateRage } from "data/types"; 
 import { GuestsObject } from "components/HeroSearchForm2Mobile/GuestsInput";
 import CheckOutPage from "containers/CheckOutPage/CheckOutPage";
 import React, { FC, Fragment, useState } from "react";

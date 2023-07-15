@@ -1,4 +1,4 @@
-import { DateRage } from "components/HeroSearchForm/StaySearchForm";
+import { DateRage } from "data/types"; 
 import React, { useState } from "react";
 import GuestsInput, { GuestsObject } from "./GuestsInput";
 import LocationInput from "./LocationInput";

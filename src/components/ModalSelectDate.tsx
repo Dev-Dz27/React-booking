@@ -1,6 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { XMarkIcon } from "@heroicons/react/24/solid";
-import { DateRage } from "components/HeroSearchForm/StaySearchForm";
+import { DateRage } from "data/types";
 import moment from "moment";
 import React, { FC, Fragment, useEffect, useState } from "react";
 import {

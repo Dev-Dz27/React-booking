@@ -138,3 +138,11 @@ export interface CarDataType {
     lng: number;
   };
 }
+
+
+// DateRage
+export interface DateRage {
+  startDate: moment.Moment | null;
+  endDate: moment.Moment | null;
+}
+// DateRage

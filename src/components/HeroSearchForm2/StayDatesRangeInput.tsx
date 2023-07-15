@@ -4,7 +4,7 @@ import {
   DateRangePicker,
   FocusedInputShape,
 } from "react-dates";
-import { DateRage } from "./StaySearchForm";
+import { DateRage } from "data/types";
 import { FC } from "react";
 import useWindowSize from "hooks/useWindowResize";
 import useNcId from "hooks/useNcId";

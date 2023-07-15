@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import moment from 'moment';
-import { DateRage } from 'components/HeroSearchForm/StaySearchForm';
+import { DateRage } from 'data/types';
 
 // Define the initial state of the booking component
 
