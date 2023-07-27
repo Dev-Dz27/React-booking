@@ -1,7 +1,5 @@
 import React, { FC, useState } from "react";
-import AnyReactComponent from "components/AnyReactComponent/AnyReactComponent";
 import StayCardH from "components/StayCardH/StayCardH";
-import GoogleMapReact from "google-map-react";
 import { DEMO_STAY_LISTINGS } from "data/listings";
 import ButtonClose from "shared/ButtonClose/ButtonClose";
 import Checkbox from "shared/Checkbox/Checkbox";
@@ -10,10 +8,11 @@ import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
 import { useSelector } from "react-redux";
 import { BookingState } from "features/bookingSlice";
+import Map from "components/ReactLeaflet/Map";
 
-const DEMO_STAYS = DEMO_STAY_LISTINGS.filter((_, i) => i < 12);
+const DEMO_STAYS = DEMO_STAY_LISTINGS.filter((_, i) => i < 12); 
 
-export interface SectionGridHasMapProps {}
+export interface SectionGridHasMapProps {} 
 
 const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
   const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
@@ -35,7 +34,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
         <div className="min-h-screen w-full xl:w-[780px] 2xl:w-[880px] flex-shrink-0 xl:px-8 ">
           <Heading2 />
           <div className="mb-8 lg:mb-11">
-            {/* <TabFilters /> */}
+            <TabFilters />
           </div>
           <div className="grid grid-cols-1 gap-8">
             {DEMO_STAYS.map((item) => (
@@ -85,25 +84,10 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
               />
             </div>
 
-            {/* BELLOW IS MY GOOGLE API KEY -- PLEASE DELETE AND TYPE YOUR API KEY */}
-            <GoogleMapReact
-              defaultZoom={12}
-              defaultCenter={DEMO_STAYS[0].map}
-              bootstrapURLKeys={{
-                key: "AIzaSyAGVJfZMAKYfZ71nzL_v5i3LjTTWnCYwTY",
-              }}
-              yesIWantToUseGoogleMapApiInternals
-            >
-              {DEMO_STAYS.map((item) => (
-                <AnyReactComponent
-                  isSelected={currentHoverID === item.id}
-                  key={item.id}
-                  lat={item.map.lat}
-                  lng={item.map.lng}
-                  listing={item}
-                />
-              ))}
-            </GoogleMapReact>
+      
+            <Map center={DEMO_STAYS[0].map} listings={DEMO_STAYS} />
+
+
           </div>
         </div>
       </div>

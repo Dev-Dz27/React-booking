@@ -1,11 +1,12 @@
-import React, { FC, Fragment, useState } from "react";
+import React, { FC, Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import LocationMarker from "components/AnyReactComponent/LocationMarker";
 import CommentListing from "components/CommentListing/CommentListing";
 import FiveStartIconForRate from "components/FiveStartIconForRate/FiveStartIconForRate";
-import GuestsInput, { GuestsInputProps }  from "components/HeroSearchForm/GuestsInput";
-import { DateRage } from "data/types"; 
+import GuestsInput, {
+
+} from "components/HeroSearchForm/GuestsInput";
+import {  StayDataType } from "data/types";
 import StartRating from "components/StartRating/StartRating";
 import GoogleMapReact from "google-map-react";
 import useWindowSize from "hooks/useWindowResize";
@@ -31,14 +32,32 @@ import SectionSubscribe2 from "components/SectionSubscribe2/SectionSubscribe2";
 import StayDatesRangeInput from "components/HeroSearchForm/StayDatesRangeInput";
 import MobileFooterSticky from "./MobileFooterSticky";
 // Redux Toolkit
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from "react-redux";
 import { setDateRange, setGuests } from "features/bookingSlice";
+import { useParams } from "react-router-dom";
+import { DEMO_STAY_LISTINGS } from "./../../data/listings";
+import { MapContainer, Marker, TileLayer, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
+import { LatLngTuple } from "leaflet";
+import CustomMarker from "components/ReactLeaflet/CustomMarker";
 
 export interface ListingStayDetailPageProps {
   className?: string;
   isPreviewMode?: boolean;
 }
+
+const ComponentResize = () => {
+  // Created ResizeComponent , then put inside MapContainer
+  const map = useMap();
+
+  setTimeout(() => {
+    map.invalidateSize();
+  }, 0);
+
+  return null;
+};
+
 
 const PHOTOS: string[] = [
   "https://images.pexels.com/photos/6129967/pexels-photo-6129967.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
@@ -86,23 +105,51 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
   className = "",
   isPreviewMode,
 }) => {
+  const { listingId } = useParams<{ listingId: string }>();
+  const [listing, setListing] = useState<StayDataType | undefined | null>(null);
+
+  useEffect(() => {
+    // Simulate data retrieval from JSON file using the listingId
+    const fetchedListing = DEMO_STAY_LISTINGS.find(
+      (listing) => listing.id === listingId // Removed Number() conversion
+    );
+
+    setListing(fetchedListing);
+  }, [listingId]);
+
+  console.log(listing);
+  const {
+    address,
+    author,
+    title,
+    reviewCount,
+    reviewStart,
+    bathrooms,
+    bedrooms,
+    maxGuests,
+    date,
+    price,
+    featuredImage,
+    galleryImgs,
+    listingCategory,
+    map /* other properties */,
+  } = listing ?? {};
+  const position:LatLngTuple = [map?.lat ?? 0, map?.lng ?? 0];
+  console.log(position);
+
   const [isOpen, setIsOpen] = useState(false);
   const [openFocusIndex, setOpenFocusIndex] = useState(0);
-  // const [selectedDate, setSelectedDate] = useState<DateRage>({
-  //   startDate: moment().add(4, "days"),
-  //   endDate: moment().add(10, "days"),
-  // });
   const [focusedInputSectionCheckDate, setFocusedInputSectionCheckDate] =
     useState<FocusedInputShape>("startDate");
   let [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
-
+  const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
 
   // Redux Toolkit
   const bookingState = useSelector((state: any) => state.booking);
   const selectedDate = bookingState.dateRange;
-const guestValue = bookingState.guests;
+  const guestValue = bookingState.guests;
 
-const dispatch = useDispatch();
+  const dispatch = useDispatch();
   // Redux Toolkit
 
   const windowSize = useWindowSize();
@@ -140,32 +187,37 @@ const dispatch = useDispatch();
       <div className="listingSection__wrap !space-y-6">
         {/* 1 */}
         <div className="flex justify-between items-center">
-          <Badge name="Wooden house" />
+          <Badge name={listingCategory?.name} />
           <LikeSaveBtns />
         </div>
 
         {/* 2 */}
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
-          Beach House in Collingwood
+          {title}
         </h2>
 
         {/* 3 */}
         <div className="flex items-center space-x-4">
-          <StartRating />
+          <StartRating reviewCount={reviewCount} reviewStart={reviewStart} />
           <span>·</span>
           <span>
             <i className="las la-map-marker-alt"></i>
-            <span className="ml-1"> Tokyo, Jappan</span>
+            <span className="ml-1">{address}</span>
           </span>
         </div>
 
         {/* 4 */}
         <div className="flex items-center">
-          <Avatar hasChecked sizeClass="h-10 w-10" radius="rounded-full" />
+          <Avatar
+            author={author}
+            hasChecked
+            sizeClass="h-10 w-10"
+            radius="rounded-full"
+          />
           <span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
             Hosted by{" "}
             <span className="text-neutral-900 dark:text-neutral-200 font-medium">
-              Kevin Francis
+              {author?.displayName}
             </span>
           </span>
         </div>
@@ -178,25 +230,26 @@ const dispatch = useDispatch();
           <div className="flex items-center space-x-3 ">
             <i className=" las la-user text-2xl "></i>
             <span className="">
-              6 <span className="hidden sm:inline-block">guests</span>
+              {maxGuests} <span className="hidden sm:inline-block">guests</span>
             </span>
           </div>
           <div className="flex items-center space-x-3">
             <i className=" las la-bed text-2xl"></i>
             <span className=" ">
-              6 <span className="hidden sm:inline-block">beds</span>
+              {bedrooms} <span className="hidden sm:inline-block">beds</span>
             </span>
           </div>
           <div className="flex items-center space-x-3">
             <i className=" las la-bath text-2xl"></i>
             <span className=" ">
-              3 <span className="hidden sm:inline-block">baths</span>
+              {bathrooms} <span className="hidden sm:inline-block">baths</span>
             </span>
           </div>
           <div className="flex items-center space-x-3">
             <i className=" las la-door-open text-2xl"></i>
             <span className=" ">
-              2 <span className="hidden sm:inline-block">bedrooms</span>
+              {bedrooms}{" "}
+              <span className="hidden sm:inline-block">bedrooms</span>
             </span>
           </div>
         </div>
@@ -409,20 +462,20 @@ const dispatch = useDispatch();
               hideKeyboardShortcutsPanel={false}
               isOutsideRange={(day) => !isInclusivelyAfterDay(day, moment())}
             /> */}
-             <DayPickerRangeController
-        startDate={selectedDate.startDate}
-        endDate={selectedDate.endDate}
-        onDatesChange={(date) => dispatch(setDateRange(date))}
-        focusedInput={focusedInputSectionCheckDate}
-        onFocusChange={(focusedInput) =>
-          setFocusedInputSectionCheckDate(focusedInput || "startDate")
-        }
-        initialVisibleMonth={null}
-        numberOfMonths={windowSize.width < 1280 ? 1 : 2}
-        daySize={getDaySize()}
-        hideKeyboardShortcutsPanel={false}
-        isOutsideRange={(day) => !isInclusivelyAfterDay(day, moment())}
-      />
+            <DayPickerRangeController
+              startDate={selectedDate.startDate}
+              endDate={selectedDate.endDate}
+              onDatesChange={(date) => dispatch(setDateRange(date))}
+              focusedInput={focusedInputSectionCheckDate}
+              onFocusChange={(focusedInput) =>
+                setFocusedInputSectionCheckDate(focusedInput || "startDate")
+              }
+              initialVisibleMonth={null}
+              numberOfMonths={windowSize.width < 1280 ? 1 : 2}
+              daySize={getDaySize()}
+              hideKeyboardShortcutsPanel={false}
+              isOutsideRange={(day) => !isInclusivelyAfterDay(day, moment())}
+            />
           </div>
         </div>
       </div>
@@ -446,7 +499,7 @@ const dispatch = useDispatch();
           />
           <div>
             <a className="block text-xl font-medium" href="##">
-              Kevin Francis
+              {author?.displayName}
             </a>
             <div className="mt-1.5 flex items-center text-sm text-neutral-500 dark:text-neutral-400">
               <StartRating />
@@ -480,7 +533,7 @@ const dispatch = useDispatch();
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <span>Joined in March 2016</span>
+            <span>Joined in {date}</span>
           </div>
           <div className="flex items-center space-x-3">
             <svg
@@ -569,6 +622,10 @@ const dispatch = useDispatch();
   };
 
   const renderSection7 = () => {
+    if (!map) {
+      // Position data not available, render a loading state or something else
+      return <p>Loading map...</p>;
+    }
     return (
       <div className="listingSection__wrap">
         {/* HEADING */}
@@ -583,7 +640,7 @@ const dispatch = useDispatch();
         {/* MAP */}
         <div className="aspect-w-5 aspect-h-5 sm:aspect-h-3">
           <div className="rounded-xl overflow-hidden">
-            <GoogleMapReact
+            {/* <GoogleMapReact
               bootstrapURLKeys={{
                 key: "AIzaSyAGVJfZMAKYfZ71nzL_v5i3LjTTWnCYwTY",
               }}
@@ -595,7 +652,27 @@ const dispatch = useDispatch();
               }}
             >
               <LocationMarker lat={55.9607277} lng={36.2172614} />
-            </GoogleMapReact>
+            </GoogleMapReact> */}
+
+    
+
+ <MapContainer
+              style={{ height: "100vh" }}
+              center={position}
+              zoom={13}
+              scrollWheelZoom={true}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors '
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+
+              <CustomMarker key={listing?.id} position={position} color="blue" >
+              <Popup>
+        A pretty CSS3 popup. <br /> Easily customizable.
+      </Popup>
+    </CustomMarker>
+            </MapContainer>
           </div>
         </div>
       </div>
@@ -662,7 +739,7 @@ const dispatch = useDispatch();
         {/* PRICE */}
         <div className="flex justify-between">
           <span className="text-3xl font-semibold">
-            $119
+            {price}
             <span className="ml-1 text-base font-normal text-neutral-500 dark:text-neutral-400">
               /night
             </span>
@@ -675,7 +752,7 @@ const dispatch = useDispatch();
           <StayDatesRangeInput
             wrapClassName="divide-x divide-neutral-200 dark:divide-neutral-700 !grid-cols-1 sm:!grid-cols-2"
             // onChange={(date) => setSelectedDate(date)}
-             onChange={(date) => dispatch(setDateRange(date))}
+            onChange={(date) => dispatch(setDateRange(date))}
             fieldClassName="p-3"
             defaultValue={selectedDate}
             anchorDirection={"right"}
@@ -692,15 +769,14 @@ const dispatch = useDispatch();
             // }}
             defaultValue={guestValue}
             hasButtonSubmit={false}
-            onChange={(guests: any ) => dispatch(setGuests(guests))}
-
+            onChange={(guests: any) => dispatch(setGuests(guests))}
           />
         </form>
 
         {/* SUM */}
         <div className="flex flex-col space-y-4">
           <div className="flex justify-between text-neutral-6000 dark:text-neutral-300">
-            <span>$119 x 3 night</span>
+            <span>{price} x 3 night</span>
             <span>$357</span>
           </div>
           <div className="flex justify-between text-neutral-6000 dark:text-neutral-300">
@@ -736,30 +812,35 @@ const dispatch = useDispatch();
               <NcImage
                 containerClassName="absolute inset-0"
                 className="object-cover w-full h-full rounded-md sm:rounded-xl"
-                src={PHOTOS[0]}
+                src={galleryImgs?.[0]}
               />
               <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
             </div>
-            {PHOTOS.filter((_, i) => i >= 1 && i < 5).map((item, index) => (
-              <div
-                key={index}
-                className={`relative rounded-md sm:rounded-xl overflow-hidden ${
-                  index >= 3 ? "hidden sm:block" : ""
-                }`}
-              >
-                <NcImage
-                  containerClassName="aspect-w-4 aspect-h-3 sm:aspect-w-6 sm:aspect-h-5"
-                  className="object-cover w-full h-full rounded-md sm:rounded-xl "
-                  src={item || ""}
-                />
-
-                {/* OVERLAY */}
+            {galleryImgs?.map(
+              (
+                item,
+                index // Use galleryImgs instead of PHOTOS
+              ) => (
                 <div
-                  className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
-                  onClick={() => handleOpenModal(index + 1)}
-                />
-              </div>
-            ))}
+                  key={index}
+                  className={`relative rounded-md sm:rounded-xl overflow-hidden ${
+                    index >= 3 ? "hidden sm:block" : ""
+                  }`}
+                >
+                  <NcImage
+                    containerClassName="aspect-w-4 aspect-h-3 sm:aspect-w-6 sm:aspect-h-5"
+                    className="object-cover w-full h-full rounded-md sm:rounded-xl "
+                    src={item || ""}
+                  />
+
+                  {/* OVERLAY */}
+                  <div
+                    className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity cursor-pointer"
+                    onClick={() => handleOpenModal(index + 1)}
+                  />
+                </div>
+              )
+            )}
 
             <div
               className="absolute hidden md:flex md:items-center md:justify-center left-3 bottom-3 px-4 py-2 rounded-xl bg-neutral-100 text-neutral-500 cursor-pointer hover:bg-neutral-200 z-10"
@@ -787,7 +868,7 @@ const dispatch = useDispatch();
         </header>
         {/* MODAL PHOTOS */}
         <ModalPhotos
-          imgs={PHOTOS}
+          imgs={galleryImgs}
           isOpen={isOpen}
           onClose={handleCloseModal}
           initFocus={openFocusIndex}

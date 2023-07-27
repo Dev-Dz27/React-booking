@@ -1,6 +1,7 @@
 import { avatarColors } from "contains/contants";
 import React, { FC } from "react";
 import avatar1 from "images/avatars/Image-1.png";
+import { AuthorType,  } from "data/types";
 
 export interface AvatarProps {
   containerClassName?: string;
@@ -10,6 +11,7 @@ export interface AvatarProps {
   userName?: string;
   hasChecked?: boolean;
   hasCheckedClass?: string;
+  author?: AuthorType;
 }
 
 const Avatar: FC<AvatarProps> = ({
@@ -20,6 +22,7 @@ const Avatar: FC<AvatarProps> = ({
   userName,
   hasChecked,
   hasCheckedClass = "w-4 h-4 -top-0.5 -right-0.5",
+  author,
 }) => {
   const url = imgUrl || "";
   const name = userName || "John Doe";
@@ -35,10 +38,10 @@ const Avatar: FC<AvatarProps> = ({
       className={`wil-avatar relative flex-shrink-0 inline-flex items-center justify-center text-neutral-100 uppercase font-semibold shadow-inner ${radius} ${sizeClass} ${containerClassName}`}
       style={{ backgroundColor: url ? undefined : _setBgColor(name) }}
     >
-      {url && (
+      {author?.avatar && (
         <img
           className={`absolute inset-0 w-full h-full object-cover ${radius}`}
-          src={url}
+          src={author?.avatar}
           alt={name}
         />
       )}

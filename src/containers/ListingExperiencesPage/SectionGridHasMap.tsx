@@ -1,6 +1,4 @@
 import React, { FC, useState } from "react";
-import AnyReactComponent from "components/AnyReactComponent/AnyReactComponent";
-import GoogleMapReact from "google-map-react";
 import { DEMO_EXPERIENCES_LISTINGS } from "data/listings";
 import ButtonClose from "shared/ButtonClose/ButtonClose";
 import Checkbox from "shared/Checkbox/Checkbox";
@@ -8,6 +6,7 @@ import Pagination from "shared/Pagination/Pagination";
 import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
 import ExperiencesCardH from "components/ExperiencesCardH/ExperiencesCardH";
+import Map from "components/ReactLeaflet/Map";
 
 const DEMO_EXPERIENCES = DEMO_EXPERIENCES_LISTINGS.filter((_, i) => i < 12);
 
@@ -83,24 +82,9 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             </div>
             {/* BELLOW IS MY GOOGLE API KEY -- PLEASE DELETE AND TYPE YOUR API KEY */}
 
-            <GoogleMapReact
-              bootstrapURLKeys={{
-                key: "AIzaSyAGVJfZMAKYfZ71nzL_v5i3LjTTWnCYwTY",
-              }}
-              yesIWantToUseGoogleMapApiInternals
-              defaultZoom={12}
-              defaultCenter={DEMO_EXPERIENCES[0].map}
-            >
-              {DEMO_EXPERIENCES.map((item) => (
-                <AnyReactComponent
-                  isSelected={currentHoverID === item.id}
-                  key={item.id}
-                  lat={item.map.lat}
-                  lng={item.map.lng}
-                  experiences={item}
-                />
-              ))}
-            </GoogleMapReact>
+
+            <Map center={DEMO_EXPERIENCES[0].map} listings={DEMO_EXPERIENCES} />
+
           </div>
         </div>
       </div>

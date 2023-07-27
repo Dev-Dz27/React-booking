@@ -1,11 +1,21 @@
-import { DateRage } from "data/types"; 
-import React, { useState } from "react";
-import GuestsInput, { GuestsObject } from "./GuestsInput";
+import { DateRage } from "data/types";
+import React, { useState, useEffect } from "react";
+import GuestsInput, { GuestsInputProps, GuestsObject } from "./GuestsInput";
 import LocationInput from "./LocationInput";
 import StayDatesRangeInput from "./StayDatesRangeInput";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "features/store";
+import moment from "moment";
+import { setDateRange, setGuests, setLocation } from "features/bookingSlice";
 
 const StaySearchForm = () => {
-  //
+  // DEFAULT DATA FOR ARCHIVE PAGE
+  const defaultLocationValue = "Tokyo, Jappan";
+  const defaultDateRange = {
+    startDate: moment(),
+    endDate: moment().add(4, "days"),
+  };
+  // Field name
   const [fieldNameShow, setFieldNameShow] = useState<
     "location" | "dates" | "guests"
   >("location");
@@ -16,13 +26,60 @@ const StaySearchForm = () => {
     guestChildren: 0,
     guestInfants: 0,
   });
+  const defaultGuestValue: GuestsInputProps["defaultValue"] = {
+    guestAdults: 2,
+    guestChildren: 2,
+    guestInfants: 1,
+  };
   const [dateRangeValue, setDateRangeValue] = useState<DateRage>({
     startDate: null,
     endDate: null,
   });
-  // console.log(
-  //   "location: ", locationInputTo, 
-  //   "date: ",dateRangeValue, "small")
+  const [locationInputValue, setLocationInputValue] = useState("");
+  const [guestValue, setGuestValue] = useState<GuestsObject>({});
+
+  const dispatch = useDispatch();
+  const { location, dateRange, guests } = useSelector(
+    (state: RootState) => state.booking
+  );
+
+  const haveDefaultValue = false;
+
+  useEffect(() => {
+    if (haveDefaultValue) {
+      setDateRangeValue(defaultDateRange);
+      setLocationInputValue(defaultLocationValue);
+      setGuestValue(defaultGuestValue);
+    } else if (location || dateRange || guests) {
+      setDateRangeValue(dateRange);
+      setLocationInputValue(location);
+      setGuestValue(guests);
+    }
+  }, []);
+
+  const handleLocationChange = (location: string) => {
+    setLocationInputValue(location);
+    dispatch(setLocation(location));
+  };
+
+  const handleDateRangeChange = (dateRange: DateRage) => {
+    setDateRangeValue(dateRange);
+    const serializedRange: DateRage = {
+      startDate: dateRange.startDate ? moment(dateRange.startDate) : null,
+      endDate: dateRange.endDate ? moment(dateRange.endDate) : null,
+    };
+    dispatch(setDateRange(serializedRange));
+  };
+
+  const handleGuestsChange = (data: GuestsObject) => {
+    const guests = {
+      guestAdults: data.guestAdults ?? 0,
+      guestChildren: data.guestChildren ?? 0,
+      guestInfants: data.guestInfants ?? 0,
+    };
+    setGuestValue(data);
+    dispatch(setGuests(guests));
+  };
 
   const renderInputLocation = () => {
     const isActive = fieldNameShow === "location";
@@ -44,11 +101,8 @@ const StaySearchForm = () => {
           </button>
         ) : (
           <LocationInput
-            defaultValue={locationInputTo}
-            onChange={(value) => {
-              setLocationInputTo(value);
-              setFieldNameShow("dates");
-            }}
+            defaultValue={locationInputValue}
+            onChange={handleLocationChange}
           />
         )}
       </div>
@@ -86,7 +140,7 @@ const StaySearchForm = () => {
         ) : (
           <StayDatesRangeInput
             defaultValue={dateRangeValue}
-            onChange={setDateRangeValue}
+            onChange={handleDateRangeChange}
           />
         )}
       </div>
@@ -123,7 +177,10 @@ const StaySearchForm = () => {
             <span>{guestSelected || `Add guests`}</span>
           </button>
         ) : (
-          <GuestsInput defaultValue={guestInput} onChange={setGuestInput} />
+          <GuestsInput 
+          defaultValue={guestValue}
+          onChange={handleGuestsChange}
+          />
         )}
       </div>
     );

@@ -23,3 +23,27 @@
     focus:border-indigo-500 block w-full sm:text-sm text-neutral-900 dark:text-neutral-200;
   }
 }
+
+/* Remove default padding and background color */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip  {
+  padding: 0;
+  background-color: transparent;
+}
+
+.leaflet-popup-content, .leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  padding: 0!important;
+  background-color: transparent!important;
+  border: none!important;
+  box-shadow: auto!important;
+  bottom: !important;
+  width: 0!important;
+  height: 0!important;
+  margin: 0!important;
+}
+
+/* Remove default border and box shadow */
+.leaflet-popup-content {
+  border: none;
+  box-shadow: none;
+}
+

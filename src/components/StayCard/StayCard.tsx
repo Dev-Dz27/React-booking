@@ -66,7 +66,7 @@ const StayCard: FC<StayCardProps> = ({
                 size === "default" ? "text-lg" : "text-base"
               }`}
             >
-              <span className="line-clamp-1">{title}</span>
+              <span className="line-clamp-1 text-black dark:text-white">{title}</span>
             </h2>
           </div>
           <div className="flex items-center text-neutral-500 dark:text-neutral-400 text-sm space-x-2">
@@ -97,7 +97,7 @@ const StayCard: FC<StayCardProps> = ({
         </div>
         <div className="w-14 border-b border-neutral-100 dark:border-neutral-800"></div>
         <div className="flex justify-between items-center">
-          <span className="text-base font-semibold">
+          <span className="text-base font-semibold text-black dark:text-white">
             {price}
             {` `}
             {size === "default" && (
