@@ -3,12 +3,9 @@ import { Dialog, Transition } from "@headlessui/react";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import CommentListing from "components/CommentListing/CommentListing";
 import FiveStartIconForRate from "components/FiveStartIconForRate/FiveStartIconForRate";
-import GuestsInput, {
-
-} from "components/HeroSearchForm/GuestsInput";
-import {  StayDataType } from "data/types";
+import GuestsInput from "components/HeroSearchForm/GuestsInput";
+import { StayDataType } from "data/types";
 import StartRating from "components/StartRating/StartRating";
-import GoogleMapReact from "google-map-react";
 import useWindowSize from "hooks/useWindowResize";
 import moment from "moment";
 import {
@@ -36,27 +33,18 @@ import { useSelector, useDispatch } from "react-redux";
 import { setDateRange, setGuests } from "features/bookingSlice";
 import { useParams } from "react-router-dom";
 import { DEMO_STAY_LISTINGS } from "./../../data/listings";
-import { MapContainer, Marker, TileLayer, Popup, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { LatLngTuple } from "leaflet";
 import CustomMarker from "components/ReactLeaflet/CustomMarker";
+import calculateTotal from "utils/calculateTotal";
 
 export interface ListingStayDetailPageProps {
   className?: string;
   isPreviewMode?: boolean;
 }
 
-const ComponentResize = () => {
-  // Created ResizeComponent , then put inside MapContainer
-  const map = useMap();
-
-  setTimeout(() => {
-    map.invalidateSize();
-  }, 0);
-
-  return null;
-};
 
 
 const PHOTOS: string[] = [
@@ -129,29 +117,31 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
     maxGuests,
     date,
     price,
-    featuredImage,
     galleryImgs,
     listingCategory,
     map /* other properties */,
   } = listing ?? {};
-  const position:LatLngTuple = [map?.lat ?? 0, map?.lng ?? 0];
-  console.log(position);
+  const position: LatLngTuple = [map?.lat ?? 0, map?.lng ?? 0];
+  console.log(listing);
 
   const [isOpen, setIsOpen] = useState(false);
   const [openFocusIndex, setOpenFocusIndex] = useState(0);
   const [focusedInputSectionCheckDate, setFocusedInputSectionCheckDate] =
     useState<FocusedInputShape>("startDate");
   let [isOpenModalAmenities, setIsOpenModalAmenities] = useState(false);
-  const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
-
-  // Redux Toolkit
   const bookingState = useSelector((state: any) => state.booking);
   const selectedDate = bookingState.dateRange;
   const guestValue = bookingState.guests;
+  const startDate = bookingState.dateRange.startDate;
+  const endDate = bookingState.dateRange.endDate;
+
+  const numberOfDays =
+    startDate && endDate ? endDate.diff(startDate, "days") : 0;
+
+  // Redux Toolkit
 
   const dispatch = useDispatch();
   // Redux Toolkit
-
   const windowSize = useWindowSize();
 
   const getDaySize = () => {
@@ -448,20 +438,6 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
 
         <div className="listingSection__wrap__DayPickerRangeController flow-root">
           <div className="-mx-4 sm:mx-auto xl:mx-[-22px]">
-            {/* <DayPickerRangeController
-              startDate={selectedDate.startDate}
-              endDate={selectedDate.endDate}
-              // onDatesChange={(date) => setSelectedDate(date)}
-              focusedInput={focusedInputSectionCheckDate}
-              onFocusChange={(focusedInput) =>
-                setFocusedInputSectionCheckDate(focusedInput || "startDate")
-              }
-              initialVisibleMonth={null}
-              numberOfMonths={windowSize.width < 1280 ? 1 : 2}
-              daySize={getDaySize()}
-              hideKeyboardShortcutsPanel={false}
-              isOutsideRange={(day) => !isInclusivelyAfterDay(day, moment())}
-            /> */}
             <DayPickerRangeController
               startDate={selectedDate.startDate}
               endDate={selectedDate.endDate}
@@ -492,6 +468,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
         {/* host */}
         <div className="flex items-center space-x-4">
           <Avatar
+            author={author}
             hasChecked
             hasCheckedClass="w-4 h-4 -top-0.5 right-0.5"
             sizeClass="h-14 w-14"
@@ -502,9 +479,9 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
               {author?.displayName}
             </a>
             <div className="mt-1.5 flex items-center text-sm text-neutral-500 dark:text-neutral-400">
-              <StartRating />
+              <StartRating reviewCount={reviewCount} reviewStart={reviewStart}/>
               <span className="mx-2">·</span>
-              <span> 12 places</span>
+              <span> {author?.count} places</span>
             </div>
           </div>
         </div>
@@ -585,7 +562,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
     return (
       <div className="listingSection__wrap">
         {/* HEADING */}
-        <h2 className="text-2xl font-semibold">Reviews (23 reviews)</h2>
+        <h2 className="text-2xl font-semibold">Reviews ({reviewCount} reviews)</h2>
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
 
         {/* Content */}
@@ -614,7 +591,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
           <CommentListing className="py-8" />
           <CommentListing className="py-8" />
           <div className="pt-8">
-            <ButtonSecondary>View more 20 reviews</ButtonSecondary>
+            <ButtonSecondary>View more {reviewCount} reviews</ButtonSecondary>
           </div>
         </div>
       </div>
@@ -640,26 +617,13 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
         {/* MAP */}
         <div className="aspect-w-5 aspect-h-5 sm:aspect-h-3">
           <div className="rounded-xl overflow-hidden">
-            {/* <GoogleMapReact
-              bootstrapURLKeys={{
-                key: "AIzaSyAGVJfZMAKYfZ71nzL_v5i3LjTTWnCYwTY",
-              }}
-              yesIWantToUseGoogleMapApiInternals
-              defaultZoom={15}
-              defaultCenter={{
-                lat: 55.9607277,
-                lng: 36.2172614,
-              }}
-            >
-              <LocationMarker lat={55.9607277} lng={36.2172614} />
-            </GoogleMapReact> */}
 
-    
 
- <MapContainer
-              style={{ height: "100vh" }}
+            <MapContainer
+              style={{ height: "90vh" }}
+              
               center={position}
-              zoom={13}
+              zoom={9}
               scrollWheelZoom={true}
             >
               <TileLayer
@@ -667,11 +631,9 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
 
-              <CustomMarker key={listing?.id} position={position} color="blue" >
-              <Popup>
-        A pretty CSS3 popup. <br /> Easily customizable.
-      </Popup>
-    </CustomMarker>
+              <CustomMarker key={listing?.id} position={position} color="blue">
+
+              </CustomMarker>
             </MapContainer>
           </div>
         </div>
@@ -744,7 +706,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
               /night
             </span>
           </span>
-          <StartRating />
+          <StartRating reviewCount={reviewCount} reviewStart={reviewStart} />
         </div>
 
         {/* FORM */}
@@ -776,8 +738,12 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
         {/* SUM */}
         <div className="flex flex-col space-y-4">
           <div className="flex justify-between text-neutral-6000 dark:text-neutral-300">
-            <span>{price} x 3 night</span>
-            <span>$357</span>
+            <span>
+              {price} x {numberOfDays}
+            </span>
+            <span>
+              {price ? `$${calculateTotal(price, numberOfDays)}` : "N/A"}
+            </span>
           </div>
           <div className="flex justify-between text-neutral-6000 dark:text-neutral-300">
             <span>Service charge</span>
@@ -786,7 +752,9 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
           <div className="border-b border-neutral-200 dark:border-neutral-700"></div>
           <div className="flex justify-between font-semibold">
             <span>Total</span>
-            <span>$199</span>
+            <span>
+              {price ? `$${calculateTotal(price, numberOfDays)}` : "N/A"}
+            </span>
           </div>
         </div>
 

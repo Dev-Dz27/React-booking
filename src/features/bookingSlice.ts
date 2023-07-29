@@ -12,6 +12,8 @@ interface BookingState {
       guestChildren: number;
       guestInfants: number;
     };
+          // hoverId
+    currentHoverID: string | number;
   }
   
   const initialState: BookingState = {
@@ -25,6 +27,8 @@ interface BookingState {
       guestChildren: 2,
       guestInfants: 1,
     },
+          // hoverId
+    currentHoverID: -1,
   };
 // Create a new slice using the createSlice function:
   const bookingSlice = createSlice({
@@ -45,6 +49,10 @@ interface BookingState {
       setGuests(state, action: PayloadAction<BookingState['guests']>) {
         state.guests = action.payload;
       },
+      // hoverId
+      setCurrentHoverID(state, action: PayloadAction<string | number>) {
+        state.currentHoverID = action.payload;
+      },
     },
   });
 
@@ -52,5 +60,5 @@ interface BookingState {
 export type { BookingState };
 //   Export the slice and its actions:
 
-  export const { setLocation, setDateRange, setGuests } = bookingSlice.actions;
+  export const { setLocation, setDateRange, setGuests, setCurrentHoverID  } = bookingSlice.actions;
 export default bookingSlice.reducer;

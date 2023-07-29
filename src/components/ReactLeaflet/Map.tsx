@@ -1,9 +1,11 @@
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { FC, useState } from "react";
+import { FC,  } from "react";
 import NumberMarker from "./NumberMarker";
 import { StayDataType } from "data/types";
+import { useSelector } from "react-redux";
+import { BookingState } from "features/bookingSlice";
 
 // Fix for the map not rendring properly
 const ComponentResize = () => {
@@ -28,8 +30,10 @@ export interface MapProps {
 }
 
 const Map: FC<MapProps> = ({ center, listings }) => {
-  const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
-  console.log(center);
+  const bookingState = useSelector((state: { booking: BookingState }) => state.booking);
+
+  const currentHoverID = bookingState.currentHoverID;
+
   return (
     <MapContainer
       style={{ height: "100vh" }}

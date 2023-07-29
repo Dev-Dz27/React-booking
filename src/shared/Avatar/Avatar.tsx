@@ -1,7 +1,7 @@
 import { avatarColors } from "contains/contants";
 import React, { FC } from "react";
 import avatar1 from "images/avatars/Image-1.png";
-import { AuthorType,  } from "data/types";
+import { AuthorType } from "data/types";
 
 export interface AvatarProps {
   containerClassName?: string;
@@ -24,8 +24,27 @@ const Avatar: FC<AvatarProps> = ({
   hasCheckedClass = "w-4 h-4 -top-0.5 -right-0.5",
   author,
 }) => {
-  const url = imgUrl || "";
-  const name = userName || "John Doe";
+
+
+  const {
+    jobName,
+    avatar,
+    firstName,
+    lastName,
+    starRating,
+    email,
+    id,
+    desc,
+    displayName,
+    href,
+    count,
+    bgImage,
+
+    /* other properties */
+  } = author ?? {};
+  
+  const url = avatar || "";
+  const name = displayName || "John Doe";
   const _setBgColor = (name: string) => {
     const backgroundIndex = Math.floor(
       name.charCodeAt(0) % avatarColors.length
@@ -33,15 +52,20 @@ const Avatar: FC<AvatarProps> = ({
     return avatarColors[backgroundIndex];
   };
 
+  console.log(author)
+
   return (
     <div
       className={`wil-avatar relative flex-shrink-0 inline-flex items-center justify-center text-neutral-100 uppercase font-semibold shadow-inner ${radius} ${sizeClass} ${containerClassName}`}
-      style={{ backgroundColor: url ? undefined : _setBgColor(name) }}
+
+        style={{
+          backgroundColor: avatar ? undefined : _setBgColor(name),
+        }}
     >
-      {author?.avatar && (
+      {avatar && (
         <img
           className={`absolute inset-0 w-full h-full object-cover ${radius}`}
-          src={author?.avatar}
+          src={avatar}
           alt={name}
         />
       )}

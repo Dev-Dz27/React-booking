@@ -6,8 +6,6 @@ import Checkbox from "shared/Checkbox/Checkbox";
 import Pagination from "shared/Pagination/Pagination";
 import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
-import { useSelector } from "react-redux";
-import { BookingState } from "features/bookingSlice";
 import Map from "components/ReactLeaflet/Map";
 
 const DEMO_STAYS = DEMO_STAY_LISTINGS.filter((_, i) => i < 12); 
@@ -19,12 +17,8 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
   const [showFullMapFixed, setShowFullMapFixed] = useState(false);
 
 
-  // Redux Toolkit
-  const bookingState = useSelector((state: { booking: BookingState }) => state.booking);
 
-  const locationValue = bookingState.location;
 
-  console.log(locationValue)
 
 
   return (
@@ -76,13 +70,13 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
           )}
 
           <div className="fixed xl:sticky top-0 xl:top-[88px] left-0 w-full h-full xl:h-[calc(100vh-88px)] rounded-md overflow-hidden">
-            <div className="absolute bottom-5 left-3 lg:bottom-auto lg:top-2.5 lg:left-1/2 transform lg:-translate-x-1/2 py-2 px-4 bg-white dark:bg-neutral-800 shadow-xl z-10 rounded-2xl min-w-max">
+            {/* <div className="absolute bottom-5 left-3 lg:bottom-auto lg:top-2.5 lg:left-1/2 transform lg:-translate-x-1/2 py-2 px-4 bg-white dark:bg-neutral-800 shadow-xl z-10 rounded-2xl min-w-max">
               <Checkbox
                 className="text-xs xl:text-sm"
                 name="xx"
                 label="Search as I move the map"
               />
-            </div>
+            </div> */}
 
       
             <Map center={DEMO_STAYS[0].map} listings={DEMO_STAYS} />
