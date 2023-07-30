@@ -7,20 +7,26 @@ import Pagination from "shared/Pagination/Pagination";
 import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
 import Map from "components/ReactLeaflet/Map";
+import { useDispatch, useSelector } from "react-redux";
+import { BookingState, setCurrentHoverID } from "features/bookingSlice";
 
-const DEMO_STAYS = DEMO_STAY_LISTINGS.filter((_, i) => i < 12); 
+const DEMO_STAYS = DEMO_STAY_LISTINGS.filter((_, i) => i < 12);
 
-export interface SectionGridHasMapProps {} 
+export interface SectionGridHasMapProps {}
 
 const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
-  const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
   const [showFullMapFixed, setShowFullMapFixed] = useState(false);
 
 
+  const dispatch = useDispatch();
 
+  const handleMouseEnter = (itemId: string | number) => {
+    dispatch(setCurrentHoverID(itemId));
+  };
 
-
-
+  const handleMouseLeave = () => {
+    dispatch(setCurrentHoverID(-1));
+  };
   return (
     <div>
       <div className="relative flex min-h-screen">
@@ -34,8 +40,8 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             {DEMO_STAYS.map((item) => (
               <div
                 key={item.id}
-                onMouseEnter={() => setCurrentHoverID((_) => item.id)}
-                onMouseLeave={() => setCurrentHoverID((_) => -1)}
+                onMouseEnter={() => handleMouseEnter(item.id)}
+                onMouseLeave={handleMouseLeave}
               >
                 <StayCardH data={item} />
               </div>
@@ -78,10 +84,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
               />
             </div> */}
 
-      
             <Map center={DEMO_STAYS[0].map} listings={DEMO_STAYS} />
-
-
           </div>
         </div>
       </div>
