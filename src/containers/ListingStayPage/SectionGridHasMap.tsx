@@ -2,13 +2,13 @@ import React, { FC, useState } from "react";
 import StayCardH from "components/StayCardH/StayCardH";
 import { DEMO_STAY_LISTINGS } from "data/listings";
 import ButtonClose from "shared/ButtonClose/ButtonClose";
-import Checkbox from "shared/Checkbox/Checkbox";
+// import Checkbox from "shared/Checkbox/Checkbox";
 import Pagination from "shared/Pagination/Pagination";
 import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
 import Map from "components/ReactLeaflet/Map";
-import { useDispatch, useSelector } from "react-redux";
-import { BookingState, setCurrentHoverID } from "features/bookingSlice";
+import { useDispatch,  } from "react-redux";
+import { setCurrentHoverID } from "features/bookingSlice";
 
 const DEMO_STAYS = DEMO_STAY_LISTINGS.filter((_, i) => i < 12);
 

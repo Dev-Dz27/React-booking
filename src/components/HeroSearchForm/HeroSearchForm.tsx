@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import LocationInput from "./LocationInput";
 import GuestsInput, { GuestsInputProps } from "./GuestsInput";
 import { FocusedInputShape } from "react-dates";
 import StayDatesRangeInput from "./StayDatesRangeInput";
 import moment from "moment";
 import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setLocation, setDateRange, setGuests } from "../../features/bookingSlice";
 import { RootState } from "../../features/store";
+import { handleLocationChange, handleDateRangeChange, handleGuestsChange } from "utils/booking";
+
 
 export interface DateRage {
   startDate: moment.Moment | null;
@@ -67,49 +67,39 @@ const StaySearchForm: FC<StaySearchFormProps> = ({
     }
   }, []);
 
-  const handleLocationChange = (location: string) => {
-    setLocationInputValue(location);
-    dispatch(setLocation(location));
+  const handleLocationInputChangeWrapper = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const location = event.target.value;
+    // Use the correct imported helper function
+    handleLocationChange(location, setLocationInputValue, dispatch);
   };
 
-  const handleDateRangeChange = (dateRange: DateRage) => {
-    setDateRangeValue(dateRange);
-    const serializedRange: DateRage  = {
-      startDate: dateRange.startDate ? moment(dateRange.startDate) : null,
-      endDate: dateRange.endDate ? moment(dateRange.endDate) : null,
-    };
-    dispatch(setDateRange(serializedRange));
-  };
-  
-
-  const handleGuestsChange = (data: GuestsObject) => {
-    const guests = {
-      guestAdults: data.guestAdults ?? 0,
-      guestChildren: data.guestChildren ?? 0,
-      guestInfants: data.guestInfants ?? 0,
-    };
-    setGuestValue(data);
-    dispatch(setGuests(guests));
+  const handleDateRangeChangeWrapper = (dateRange: DateRage) => {
+    // Use the correct imported helper function
+    handleDateRangeChange(dateRange, setDateRangeValue, dispatch);
   };
 
+  const handleGuestsChangeWrapper = (data: GuestsObject) => {
+    // Use the correct imported helper function
+    handleGuestsChange(data, setGuestValue, dispatch);
+  };
   const renderForm = () => {
     return (
       <form className="w-full relative mt-8 flex rounded-full shadow-xl dark:shadow-2xl bg-white dark:bg-neutral-800 ">
-        <LocationInput
+        {/* <LocationInput
           defaultValue={locationInputValue}
-          onChange={handleLocationChange}
+          onChange={handleLocationInputChangeWrapper}
           onInputDone={() => setDateFocused("startDate")}
           className="flex-[1.5]"
-        />
+        /> */}
         <StayDatesRangeInput
           defaultValue={dateRangeValue}
           defaultFocus={dateFocused}
-          onChange={handleDateRangeChange}
+          onChange={handleDateRangeChangeWrapper}
           className="flex-[2]"
         />
         <GuestsInput
           defaultValue={guestValue}
-          onChange={handleGuestsChange}
+          onChange={handleGuestsChangeWrapper}
           className="flex-[1.2]"
         />
       </form>

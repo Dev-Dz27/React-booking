@@ -1,12 +1,11 @@
 import { DateRage } from "data/types";
 import React, { useState, useEffect } from "react";
 import GuestsInput, { GuestsInputProps, GuestsObject } from "./GuestsInput";
-import LocationInput from "./LocationInput";
 import StayDatesRangeInput from "./StayDatesRangeInput";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "features/store";
 import moment from "moment";
-import { setDateRange, setGuests, setLocation } from "features/bookingSlice";
+import { handleDateRangeChange, handleGuestsChange, handleLocationChange } from "utils/booking";
 
 const StaySearchForm = () => {
   // DEFAULT DATA FOR ARCHIVE PAGE
@@ -20,7 +19,6 @@ const StaySearchForm = () => {
     "location" | "dates" | "guests"
   >("location");
   //
-  const [locationInputTo, setLocationInputTo] = useState("");
   const [guestInput, setGuestInput] = useState<GuestsObject>({
     guestAdults: 0,
     guestChildren: 0,
@@ -57,29 +55,19 @@ const StaySearchForm = () => {
     }
   }, []);
 
-  const handleLocationChange = (location: string) => {
-    setLocationInputValue(location);
-    dispatch(setLocation(location));
+  const handleLocationInputChangeWrapper = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const location = event.target.value;
+    handleLocationChange(location, setLocationInputValue, dispatch);
   };
 
-  const handleDateRangeChange = (dateRange: DateRage) => {
-    setDateRangeValue(dateRange);
-    const serializedRange: DateRage = {
-      startDate: dateRange.startDate ? moment(dateRange.startDate) : null,
-      endDate: dateRange.endDate ? moment(dateRange.endDate) : null,
-    };
-    dispatch(setDateRange(serializedRange));
+  const handleDateRangeChangeWrapper = (dateRange: DateRage) => {
+    handleDateRangeChange(dateRange, setDateRangeValue, dispatch);
   };
 
-  const handleGuestsChange = (data: GuestsObject) => {
-    const guests = {
-      guestAdults: data.guestAdults ?? 0,
-      guestChildren: data.guestChildren ?? 0,
-      guestInfants: data.guestInfants ?? 0,
-    };
-    setGuestValue(data);
-    dispatch(setGuests(guests));
+  const handleGuestsChangeWrapper = (data: GuestsObject) => {
+    handleGuestsChange(data, setGuestValue, dispatch);
   };
+
 
   const renderInputLocation = () => {
     const isActive = fieldNameShow === "location";
@@ -91,7 +79,7 @@ const StaySearchForm = () => {
             : "rounded-xl shadow-[0px_2px_2px_0px_rgba(0,0,0,0.25)]"
         }`}
       >
-        {!isActive ? (
+        {/* {!isActive ? (
           <button
             className={`w-full flex justify-between text-sm font-medium p-4`}
             onClick={() => setFieldNameShow("location")}
@@ -102,9 +90,9 @@ const StaySearchForm = () => {
         ) : (
           <LocationInput
             defaultValue={locationInputValue}
-            onChange={handleLocationChange}
+            onChange={handleLocationInputChangeWrapper}
           />
-        )}
+        )} */}
       </div>
     );
   };
@@ -140,7 +128,7 @@ const StaySearchForm = () => {
         ) : (
           <StayDatesRangeInput
             defaultValue={dateRangeValue}
-            onChange={handleDateRangeChange}
+            onChange={handleDateRangeChangeWrapper}
           />
         )}
       </div>
@@ -179,7 +167,7 @@ const StaySearchForm = () => {
         ) : (
           <GuestsInput 
           defaultValue={guestValue}
-          onChange={handleGuestsChange}
+          onChange={handleGuestsChangeWrapper}
           />
         )}
       </div>
