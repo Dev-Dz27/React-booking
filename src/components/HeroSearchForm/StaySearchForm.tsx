@@ -52,15 +52,6 @@ const StaySearchForm: FC<StaySearchFormProps> = ({
 
   const dispatch = useDispatch();
 
-  console.log(
-    "location: ",
-    locationInputValue,
-    "date: ",
-    dateRangeValue,
-    "Guest: ",
-    guestValue,
-    "wide"
-  );
 
   useEffect(() => {
     if (haveDefaultValue) {

@@ -166,7 +166,7 @@ const StayDatesRangeInput: FC<StayDatesRangeInputProps> = ({
       </div>
 
       <div className={`flex-1 grid grid-cols-2 relative ${wrapClassName}`}>
-        {renderInputCheckInDate()}
+        {renderInputCheckInDate()} 
         {renderInputCheckOutDate()}
       </div>
     </div>

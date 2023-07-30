@@ -105,7 +105,6 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
     setListing(fetchedListing);
   }, [listingId]);
 
-  console.log(listing);
   const {
     address,
     author,
@@ -122,7 +121,6 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
     map /* other properties */,
   } = listing ?? {};
   const position: LatLngTuple = [map?.lat ?? 0, map?.lng ?? 0];
-  console.log(listing);
 
   const [isOpen, setIsOpen] = useState(false);
   const [openFocusIndex, setOpenFocusIndex] = useState(0);

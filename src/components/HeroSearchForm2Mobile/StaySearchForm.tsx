@@ -5,7 +5,7 @@ import StayDatesRangeInput from "./StayDatesRangeInput";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "features/store";
 import moment from "moment";
-import { handleDateRangeChange, handleGuestsChange, handleLocationChange } from "utils/booking";
+import { handleDateRangeChange, handleGuestsChange,  setInitialValues } from "utils/booking";
 
 const StaySearchForm = () => {
   // DEFAULT DATA FOR ARCHIVE PAGE
@@ -19,7 +19,7 @@ const StaySearchForm = () => {
     "location" | "dates" | "guests"
   >("location");
   //
-  const [guestInput, setGuestInput] = useState<GuestsObject>({
+  const [guestInput] = useState<GuestsObject>({
     guestAdults: 0,
     guestChildren: 0,
     guestInfants: 0,
@@ -33,7 +33,7 @@ const StaySearchForm = () => {
     startDate: null,
     endDate: null,
   });
-  const [locationInputValue, setLocationInputValue] = useState("");
+  const [, setLocationInputValue] = useState("");
   const [guestValue, setGuestValue] = useState<GuestsObject>({});
 
   const dispatch = useDispatch();
@@ -44,21 +44,26 @@ const StaySearchForm = () => {
   const haveDefaultValue = false;
 
   useEffect(() => {
-    if (haveDefaultValue) {
-      setDateRangeValue(defaultDateRange);
-      setLocationInputValue(defaultLocationValue);
-      setGuestValue(defaultGuestValue);
-    } else if (location || dateRange || guests) {
-      setDateRangeValue(dateRange);
-      setLocationInputValue(location);
-      setGuestValue(guests);
-    }
+    setInitialValues(
+      haveDefaultValue,
+      defaultDateRange,
+      defaultLocationValue,
+      defaultGuestValue,
+      location, // Pass the location here
+      dateRange, // Pass the dateRange here
+      guests, // Pass the guests here
+      setLocationInputValue,
+      setDateRangeValue,
+      setGuestValue,
+      dispatch
+    );
   }, []);
 
-  const handleLocationInputChangeWrapper = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const location = event.target.value;
-    handleLocationChange(location, setLocationInputValue, dispatch);
-  };
+
+  // const handleLocationInputChangeWrapper = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   const location = event.target.value;
+  //   handleLocationChange(location, setLocationInputValue, dispatch);
+  // };
 
   const handleDateRangeChangeWrapper = (dateRange: DateRage) => {
     handleDateRangeChange(dateRange, setDateRangeValue, dispatch);

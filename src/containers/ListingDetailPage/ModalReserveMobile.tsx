@@ -9,7 +9,7 @@ interface ModalReserveMobileProps {
   onClose?: () => void;
   onChangeGuests: (date: GuestsObject) => void;
   renderChildren?: (p: { openModal: () => void }) => React.ReactNode;
-  onChangeDate: (date: DateRage) => void;
+  onChangeDate?: (date: DateRage) => void;
   defaultGuests: GuestsObject;
   defaultDate: DateRage;
 }
@@ -17,7 +17,7 @@ interface ModalReserveMobileProps {
 const ModalReserveMobile: FC<ModalReserveMobileProps> = ({
   onClose,
   onChangeGuests,
-  onChangeDate,
+  // onChangeDate,
   renderChildren,
   defaultGuests,
   defaultDate,

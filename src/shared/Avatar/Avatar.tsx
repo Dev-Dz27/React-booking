@@ -27,23 +27,23 @@ const Avatar: FC<AvatarProps> = ({
 
 
   const {
-    jobName,
+    // jobName,
     avatar,
-    firstName,
-    lastName,
-    starRating,
-    email,
-    id,
-    desc,
+    // firstName,
+    // lastName,
+    // starRating,
+    // email,
+    // id,
+    // desc,
     displayName,
-    href,
-    count,
-    bgImage,
+    // href,
+    // count,
+    // bgImage,
 
     /* other properties */
   } = author ?? {};
   
-  const url = avatar || "";
+  // const url = avatar || "";
   const name = displayName || "John Doe";
   const _setBgColor = (name: string) => {
     const backgroundIndex = Math.floor(
@@ -52,7 +52,6 @@ const Avatar: FC<AvatarProps> = ({
     return avatarColors[backgroundIndex];
   };
 
-  console.log(author)
 
   return (
     <div
