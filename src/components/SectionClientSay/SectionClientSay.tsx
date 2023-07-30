@@ -2,15 +2,15 @@ import Glide from "@glidejs/glide";
 import Heading from "components/Heading/Heading";
 import React, { FC } from "react";
 import { useEffect } from "react";
-import clientSayMain from "images/clientSayMain.png";
-import clientSay1 from "images/clientSay1.png";
-import clientSay2 from "images/clientSay2.png";
-import clientSay3 from "images/clientSay3.png";
-import clientSay4 from "images/clientSay4.png";
-import clientSay5 from "images/clientSay5.png";
-import clientSay6 from "images/clientSay6.png";
-import quotationImg from "images/quotation.png";
-import quotationImg2 from "images/quotation2.png";
+import clientSayMain from "images/clientSayMain.webp";
+import clientSay1 from "images/clientSay1.webp";
+import clientSay2 from "images/clientSay2.webp";
+import clientSay3 from "images/clientSay3.webp";
+import clientSay4 from "images/clientSay4.webp";
+import clientSay5 from "images/clientSay5.webp";
+import clientSay6 from "images/clientSay6.webp";
+import quotationImg from "images/quotation.webp";
+import quotationImg2 from "images/quotation2.webp";
 import useNcId from "hooks/useNcId";
 
 export interface SectionClientSayProps {

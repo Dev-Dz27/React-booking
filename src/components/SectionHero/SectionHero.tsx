@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import ButtonPrimary from "shared/Button/ButtonPrimary";
-import imagePng from "images/hero-right.png";
+import imagePng from "images/hero-right.webp";
 import HeroSearchForm from "components/HeroSearchForm/HeroSearchForm";
 
 export interface SectionHeroProps {

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import rightImgPng from "images/our-features.png";
+import rightImgPng from "images/our-features.webp";
 import NcImage from "shared/NcImage/NcImage";
 import Badge from "shared/Badge/Badge";
 

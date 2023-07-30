@@ -1,9 +1,9 @@
 import Heading from "components/Heading/Heading";
 import React, { FC } from "react";
 import NcImage from "shared/NcImage/NcImage";
-import HIW1img from "images/HIW1.png";
-import HIW2img from "images/HIW2.png";
-import HIW3img from "images/HIW3.png";
+import HIW1img from "images/HIW1.webp";
+import HIW2img from "images/HIW2.webp";
+import HIW3img from "images/HIW3.webp";
 import VectorImg from "images/VectorHIW.svg";
 
 export interface SectionHowItWorkProps {
