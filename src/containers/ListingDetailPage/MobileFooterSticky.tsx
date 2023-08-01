@@ -40,8 +40,15 @@ const MobileFooterSticky = () => {
     handleGuestsChange(data, setGuestsState, dispatch);
   };
 
+  const bookingState = useSelector((state: RootState) => state.booking);
+
+  const showModal = bookingState.showModal;
+
+
   return (
-    <div className="block lg:hidden fixed bottom-0 inset-x-0 py-2 sm:py-3 bg-white dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-6000 z-20">
+    <div className={`block lg:hidden fixed bottom-0 inset-x-0 py-2 sm:py-3 bg-white dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-6000 ${
+      showModal ? 'z-0 ' : 'z-20'
+    }`}>
       <div className="container flex items-center justify-between">
         <div className="">
           <span className="block text-xl font-semibold">

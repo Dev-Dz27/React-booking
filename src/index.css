@@ -25,20 +25,23 @@
 }
 
 /* Remove default padding and background color */
-.leaflet-popup-content-wrapper, .leaflet-popup-tip  {
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
   padding: 0;
   background-color: transparent;
 }
 
-.leaflet-popup-content, .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-  padding: 0!important;
-  background-color: transparent!important;
-  border: none!important;
-  box-shadow: auto!important;
+.leaflet-popup-content,
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  padding: 0 !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: auto !important;
   bottom: !important;
-  width: 0!important;
-  height: 0!important;
-  margin: 0!important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
 }
 
 /* Remove default border and box shadow */

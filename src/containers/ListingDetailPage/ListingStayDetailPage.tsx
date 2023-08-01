@@ -1,6 +1,6 @@
 import React, { FC, Fragment, useEffect, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { ArrowRightIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import CommentListing from "components/CommentListing/CommentListing";
 import FiveStartIconForRate from "components/FiveStartIconForRate/FiveStartIconForRate";
 import GuestsInput from "components/HeroSearchForm/GuestsInput";
@@ -30,22 +30,28 @@ import StayDatesRangeInput from "components/HeroSearchForm/StayDatesRangeInput";
 import MobileFooterSticky from "./MobileFooterSticky";
 // Redux Toolkit
 import { useSelector, useDispatch } from "react-redux";
-import { setDateRange, setGuests } from "features/bookingSlice";
+import {
+  setDateRange,
+  setGuests,
+  openModal,
+  closeModal,
+} from "features/bookingSlice";
 import { useParams } from "react-router-dom";
 import { DEMO_STAY_LISTINGS } from "./../../data/listings";
-import { MapContainer, TileLayer, } from "react-leaflet";
+import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
 import { LatLngTuple } from "leaflet";
 import CustomMarker from "components/ReactLeaflet/CustomMarker";
 import calculateTotal from "utils/calculateTotal";
 
+// MatterPort
+import ThreeDBadge from "components/SaleOffBadge/3DBadge";
+
 export interface ListingStayDetailPageProps {
   className?: string;
   isPreviewMode?: boolean;
 }
-
-
 
 // const PHOTOS: string[] = [
 //   "https://images.pexels.com/photos/6129967/pexels-photo-6129967.jpeg?auto=compress&cs=tinysrgb&dpr=3&h=750&w=1260",
@@ -118,8 +124,12 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
     price,
     galleryImgs,
     listingCategory,
+    has3D,
+    matterportURL,
     map /* other properties */,
   } = listing ?? {};
+
+  console.log(matterportURL);
   const position: LatLngTuple = [map?.lat ?? 0, map?.lng ?? 0];
 
   const [isOpen, setIsOpen] = useState(false);
@@ -132,7 +142,6 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
   const guestValue = bookingState.guests;
   const startDate = bookingState.dateRange.startDate;
   const endDate = bookingState.dateRange.endDate;
-
   const numberOfDays =
     startDate && endDate ? endDate.diff(startDate, "days") : 0;
 
@@ -170,12 +179,28 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
 
   const handleCloseModal = () => setIsOpen(false);
 
+  // Matterport
+  // const [showModal, setShowModal] = useState(false);
+  const showModal = bookingState.showModal;
+
+  const HandleshowModal = () => {
+    // setShowModal(true);
+    dispatch(openModal());
+  };
+
+  const HideModal = () => {
+    //   setShowModal(false);
+    dispatch(closeModal());
+  };
+
   const renderSection1 = () => {
     return (
       <div className="listingSection__wrap !space-y-6">
         {/* 1 */}
         <div className="flex justify-between items-center">
           <Badge name={listingCategory?.name} />
+          {has3D && <ThreeDBadge onClick={HandleshowModal} />}
+
           <LikeSaveBtns />
         </div>
 
@@ -183,6 +208,33 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
           {title}
         </h2>
+
+        {/* Modal */}
+        {showModal && (
+          <div
+            className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 hover:bg-opacity-50 flex items-center justify-center  z-50 "
+            onClick={HideModal}
+          >
+            <div className="relative w-full h-full max-w-3xl max-h-3xl z-50">
+              <button
+                className="absolute top-0 right-0 p-4   bg-black bg-opacity-50 hover:bg-opacity-50 rounded-full px-2 py-2 mt-6 mr-6 text-white  cursor-pointer"
+                onClick={HideModal}
+              >
+                <XMarkIcon
+                  className="h-8 w-8"
+                />
+              </button>
+              <iframe
+                src={`https://my.matterport.com/show/?m=${matterportURL}`}
+                title="3D Tour"
+                width="100%"
+                height="100%"
+                frameBorder="0"
+                // className="z-50"
+              />
+            </div>
+          </div>
+        )}
 
         {/* 3 */}
         <div className="flex items-center space-x-4">
@@ -477,7 +529,10 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
               {author?.displayName}
             </a>
             <div className="mt-1.5 flex items-center text-sm text-neutral-500 dark:text-neutral-400">
-              <StartRating reviewCount={reviewCount} reviewStart={reviewStart}/>
+              <StartRating
+                reviewCount={reviewCount}
+                reviewStart={reviewStart}
+              />
               <span className="mx-2">·</span>
               <span> {author?.count} places</span>
             </div>
@@ -560,7 +615,9 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
     return (
       <div className="listingSection__wrap">
         {/* HEADING */}
-        <h2 className="text-2xl font-semibold">Reviews ({reviewCount} reviews)</h2>
+        <h2 className="text-2xl font-semibold">
+          Reviews ({reviewCount} reviews)
+        </h2>
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
 
         {/* Content */}
@@ -613,28 +670,34 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700" />
 
         {/* MAP */}
-        <div className="aspect-w-5 aspect-h-5 sm:aspect-h-3">
-          <div className="rounded-xl overflow-hidden">
 
-
-            <MapContainer
-              style={{ height: "90vh" }}
-              
-              center={position}
-              zoom={9}
-              scrollWheelZoom={true}
+        {!showModal && (
+          <div className="aspect-w-5 aspect-h-5 sm:aspect-h-3">
+            <div
+              className="rounded-xl 
+          overflow-hidden
+          "
             >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors '
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+              <MapContainer
+                style={{ height: "100vh" }}
+                center={position}
+                zoom={9}
+                scrollWheelZoom={true}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors '
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
 
-              <CustomMarker key={listing?.id} position={position} color="blue">
-
-              </CustomMarker>
-            </MapContainer>
+                <CustomMarker
+                  key={listing?.id}
+                  position={position}
+                  color="blue"
+                ></CustomMarker>
+              </MapContainer>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   };
@@ -696,7 +759,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
   const renderSidebar = () => {
     return (
       <div className="listingSectionSidebar__wrap shadow-xl">
-        {/* PRICE */}
+        PRICE
         <div className="flex justify-between">
           <span className="text-3xl font-semibold">
             {price}
@@ -706,7 +769,6 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
           </span>
           <StartRating reviewCount={reviewCount} reviewStart={reviewStart} />
         </div>
-
         {/* FORM */}
         <form className="flex flex-col border border-neutral-200 dark:border-neutral-700 rounded-3xl ">
           <StayDatesRangeInput
@@ -722,13 +784,11 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
           <GuestsInput
             className="nc-ListingStayDetailPage__guestsInput flex-1"
             fieldClassName="p-3"
-
             defaultValue={guestValue}
             hasButtonSubmit={false}
             onChange={(guests: any) => dispatch(setGuests(guests))}
           />
         </form>
-
         {/* SUM */}
         <div className="flex flex-col space-y-4">
           <div className="flex justify-between text-neutral-6000 dark:text-neutral-300">
@@ -751,7 +811,6 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
             </span>
           </div>
         </div>
-
         {/* SUBMIT */}
         <ButtonPrimary href={"/checkout"}>Reserve</ButtonPrimary>
       </div>

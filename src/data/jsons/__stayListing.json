@@ -25,6 +25,8 @@
     "bathrooms": 3,
     "saleOff": "-10% today",
     "isAds": null,
+    "has3D": true,
+    "matterportURL": "gTq2W1H6WN5",
     "map": { "lat": 36.2094559, "lng": 0.39594641 }
   },
   {

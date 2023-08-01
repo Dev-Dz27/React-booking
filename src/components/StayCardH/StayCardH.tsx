@@ -5,8 +5,12 @@ import { StayDataType } from "data/types";
 import StartRating from "components/StartRating/StartRating";
 import { Link } from "react-router-dom";
 import BtnLikeIcon from "components/BtnLikeIcon/BtnLikeIcon";
-import SaleOffBadge from "components/SaleOffBadge/SaleOffBadge";
+// import SaleOffBadge from "components/SaleOffBadge/SaleOffBadge";
 import Badge from "shared/Badge/Badge";
+import {
+  CubeIcon
+} from "@heroicons/react/24/outline";
+import ThreeDBadge from "components/SaleOffBadge/3DBadge";
 
 export interface StayCardHProps {
   className?: string;
@@ -17,7 +21,7 @@ const DEMO_DATA = DEMO_STAY_LISTINGS[0];
 
 const StayCardH: FC<StayCardHProps> = ({
   className = "",
-  data = DEMO_DATA,
+  data= DEMO_DATA,
 }) => {
   const {
     galleryImgs,
@@ -32,7 +36,9 @@ const StayCardH: FC<StayCardHProps> = ({
     reviewStart,
     reviewCount,
     id,
+    has3D
   } = data;
+
 
   const renderSliderGallery = () => {
     return (
@@ -44,7 +50,9 @@ const StayCardH: FC<StayCardHProps> = ({
           href={href}
         />
         <BtnLikeIcon isLiked={like} className="absolute right-3 top-3" />
-        {saleOff && <SaleOffBadge className="absolute left-3 top-3" />}
+        {/* {saleOff && <SaleOffBadge className="absolute left-3 top-3" />}  */}
+        {has3D && <ThreeDBadge className="absolute left-3 top-3" />} 
+        {/* <CubeIcon  className="w-6 h-6 absolute left-3 top-3" />  */}
       </div>
     );
   };
@@ -118,7 +126,7 @@ const StayCardH: FC<StayCardHProps> = ({
         {renderTienIch()}
         <div className="w-14 border-b border-neutral-100 dark:border-neutral-800 my-4"></div>
         <div className="flex justify-between items-end">
-          <StartRating reviewCount={reviewCount} point={reviewStart} />
+          <StartRating reviewCount={reviewCount} reviewStart={reviewStart} />
           <span className="text-base font-semibold text-secondary-500">
             {price}
             {` `}

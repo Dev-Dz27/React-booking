@@ -13,7 +13,9 @@ export interface MainNav1Props {
 
 const MainNav1: FC<MainNav1Props> = ({ className = "" }) => {
   return (
-    <div className={`nc-MainNav1 relative z-10 ${className}`}>
+    <div 
+    className={`nc-MainNav1 relative z-10 ${className}`}
+    >
       <div className="px-4 lg:container py-4 lg:py-5 relative flex justify-between items-center">
         <div className="hidden md:flex justify-start flex-1 items-center space-x-4 sm:space-x-10">
           <Logo />

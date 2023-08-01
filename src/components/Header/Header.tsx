@@ -1,6 +1,8 @@
 import React, { FC } from "react";
 import MainNav1 from "./MainNav1";
 import MainNav2 from "./MainNav2";
+import {  useSelector } from "react-redux";
+import { RootState } from "features/store";
 
 export interface HeaderProps {
   navType?: "MainNav1" | "MainNav2";
@@ -19,9 +21,18 @@ const Header: FC<HeaderProps> = ({ navType = "MainNav1", className = "" }) => {
     }
   };
 
+  const bookingState = useSelector((state: RootState) => state.booking);
+
+  const showModal = bookingState.showModal;
+
+
   return (
     <div
-      className={`nc-Header sticky top-0 w-full left-0 right-0 z-40 nc-header-bg ${className}`}
+             className={`
+             nc-Header sticky top-0 w-full left-0 right-0 
+
+            z-${showModal ? "10" : "40"}
+             nc-header-bg ${className}`}
     >
       {renderNav()}
     </div>

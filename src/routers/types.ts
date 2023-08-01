@@ -13,6 +13,7 @@ export interface LocationStates {
   "/listing-stay-map"?: {};
   "/listing-stay-detail"?: {};
   "/:listingId"?: {};
+  // "/test"?: {};
   //
   "/listing-experiences"?: {};
   "/listing-experiences-map"?: {};

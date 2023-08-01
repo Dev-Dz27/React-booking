@@ -1,64 +1,79 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import moment from 'moment';
-import { DateRage } from 'data/types';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import moment from "moment";
+import { DateRage } from "data/types";
 
 // Define the initial state of the booking component
 
 interface BookingState {
-    location: string;
-    dateRange: DateRage;
-    guests: {
-      guestAdults: number;
-      guestChildren: number;
-      guestInfants: number;
-    };
-          // hoverId
-    currentHoverID: string | number;
-  }
-  
-  const initialState: BookingState = {
-    location: '',
-    dateRange: {
-      startDate: moment(),
-      endDate: moment().add(4, 'days'),
-    },
-    guests: {
-      guestAdults: 2,
-      guestChildren: 2,
-      guestInfants: 1,
-    },
-          // hoverId
-    currentHoverID: -1,
+  location: string;
+  dateRange: DateRage;
+  guests: {
+    guestAdults: number;
+    guestChildren: number;
+    guestInfants: number;
   };
-// Create a new slice using the createSlice function:
-  const bookingSlice = createSlice({
-    name: 'booking',
-    initialState,
-    reducers: {
-      setLocation(state, action: PayloadAction<string>) {
-        state.location = action.payload;
-      },
-      setDateRange(state, action: PayloadAction<DateRage>) {
-        const { startDate, endDate } = action.payload;
-        state.dateRange = {
-          startDate: startDate ? moment(startDate) : null,
-          endDate: endDate ? moment(endDate) : null,
-        };
-      },
-      
-      setGuests(state, action: PayloadAction<BookingState['guests']>) {
-        state.guests = action.payload;
-      },
-      // hoverId
-      setCurrentHoverID(state, action: PayloadAction<string | number>) {
-        state.currentHoverID = action.payload;
-      },
-    },
-  });
+  // hoverId
+  currentHoverID: string | number;
+  showModal: boolean;
+}
 
-  // Export the BookingState interface
+const initialState: BookingState = {
+  location: "",
+  dateRange: {
+    startDate: moment(),
+    endDate: moment().add(4, "days"),
+  },
+  guests: {
+    guestAdults: 2,
+    guestChildren: 2,
+    guestInfants: 1,
+  },
+  // hoverId
+  currentHoverID: -1,
+  showModal: false,
+};
+// Create a new slice using the createSlice function:
+const bookingSlice = createSlice({
+  name: "booking",
+  initialState,
+  reducers: {
+    setLocation(state, action: PayloadAction<string>) {
+      state.location = action.payload;
+    },
+    setDateRange(state, action: PayloadAction<DateRage>) {
+      const { startDate, endDate } = action.payload;
+      state.dateRange = {
+        startDate: startDate ? moment(startDate) : null,
+        endDate: endDate ? moment(endDate) : null,
+      };
+    },
+
+    setGuests(state, action: PayloadAction<BookingState["guests"]>) {
+      state.guests = action.payload;
+    },
+    // hoverId
+    setCurrentHoverID(state, action: PayloadAction<string | number>) {
+      state.currentHoverID = action.payload;
+    },
+    openModal(state) {
+      state.showModal = true;
+    },
+    closeModal(state) {
+      state.showModal = false;
+    },
+  },
+});
+
+// Export the BookingState interface
 export type { BookingState };
 //   Export the slice and its actions:
 
-  export const { setLocation, setDateRange, setGuests, setCurrentHoverID  } = bookingSlice.actions;
+export const {
+  setLocation,
+  setDateRange,
+  setGuests,
+  setCurrentHoverID,
+  openModal,
+  closeModal,
+} = bookingSlice.actions;
 export default bookingSlice.reducer;

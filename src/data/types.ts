@@ -80,6 +80,8 @@ export interface StayDataType {
   bathrooms: number;
   saleOff?: string | null;
   isAds: boolean | null;
+  has3D?: boolean;
+  matterportURL?: string | null;
   map: {
     lat: number;
     lng: number;

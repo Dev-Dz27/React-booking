@@ -24,7 +24,7 @@ const Avatar: FC<AvatarProps> = ({
   hasCheckedClass = "w-4 h-4 -top-0.5 -right-0.5",
   author,
 }) => {
-
+  
 
   const {
     // jobName,
@@ -43,7 +43,7 @@ const Avatar: FC<AvatarProps> = ({
     /* other properties */
   } = author ?? {};
   
-  // const url = avatar || "";
+  // const url = imgUrl || "";
   const name = displayName || "John Doe";
   const _setBgColor = (name: string) => {
     const backgroundIndex = Math.floor(

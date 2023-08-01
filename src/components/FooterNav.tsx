@@ -3,7 +3,9 @@ import {
   MagnifyingGlassIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
+import { RootState } from "features/store";
 import React, { useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import { PathName } from "routers/types";
 import MenuBar from "shared/MenuBar/MenuBar";
@@ -79,12 +81,18 @@ const FooterNav = () => {
 
     WIN_PREV_POSITION = currentScrollPos;
   };
+// Hide when the Matterport modal open
+const bookingState = useSelector((state: RootState) => state.booking);
+
+const showModal = bookingState.showModal;
 
   return (
     <div
       ref={containerRef}
-      className="FooterNav p-2 bg-white dark:bg-neutral-800 fixed top-auto bottom-0 inset-x-0 z-30 border-t border-neutral-300 dark:border-neutral-700 
-      transition-transform duration-300 ease-in-out"
+      className={`FooterNav p-2 bg-white dark:bg-neutral-800 fixed top-auto bottom-0 inset-x-0 ${
+        showModal ? 'z-0 ' : 'z-30'
+      } border-t border-neutral-300 dark:border-neutral-700 
+      transition-transform duration-300 ease-in-out`}
     >
       <div className="w-full max-w-lg flex justify-around mx-auto text-sm text-center ">
         {/* MENU */}
