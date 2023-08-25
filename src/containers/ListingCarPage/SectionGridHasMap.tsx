@@ -7,14 +7,26 @@ import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
 import CarCardH from "components/CarCardH/CarCardH";
 import Map from "components/ReactLeaflet/Map";
+import { useDispatch } from "react-redux";
+import { setCurrentHoverID } from "features/bookingSlice";
 
 const DEMO_CARS = DEMO_CAR_LISTINGS.filter((_, i) => i < 12);
 
 export interface SectionGridHasMapProps {}
 
 const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
-  const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
   const [showFullMapFixed, setShowFullMapFixed] = useState(false);
+
+
+  const dispatch = useDispatch();
+
+  const handleMouseEnter = (itemId: string | number) => {
+    dispatch(setCurrentHoverID(itemId));
+  };
+
+  const handleMouseLeave = () => {
+    dispatch(setCurrentHoverID(-1));
+  };
 
   return (
     <div>
@@ -38,8 +50,8 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             {DEMO_CARS.map((item) => (
               <div
                 key={item.id}
-                onMouseEnter={() => setCurrentHoverID((_) => item.id)}
-                onMouseLeave={() => setCurrentHoverID((_) => -1)}
+                onMouseEnter={() => handleMouseEnter(item.id)}
+                onMouseLeave={handleMouseLeave}
               >
                 <CarCardH data={item} />
               </div>
@@ -81,7 +93,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             </div>
             {/* BELLOW IS MY GOOGLE API KEY -- PLEASE DELETE AND TYPE YOUR API KEY */}
 
-            <Map center={DEMO_CARS[0].map} listings={DEMO_CARS} />
+            <Map center={DEMO_CARS[0].map} car={DEMO_CARS} />
 
 
           </div>

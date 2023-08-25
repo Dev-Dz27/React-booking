@@ -3,7 +3,7 @@ import "leaflet/dist/leaflet.css";
 
 import { FC,  } from "react";
 import NumberMarker from "./NumberMarker";
-import { StayDataType } from "data/types";
+import { CarDataType, ExperiencesDataType, StayDataType } from "data/types";
 import { useSelector } from "react-redux";
 import { BookingState } from "features/bookingSlice";
 
@@ -26,10 +26,12 @@ interface Centertypes {
 
 export interface MapProps {
   center: Centertypes;
-  listings: any;
+  listing?: any;
+  experiences?: any;
+  car?: any;
 }
 
-const Map: FC<MapProps> = ({ center, listings }) => {
+const Map: FC<MapProps> = ({ center, listing, experiences, car }) => {
   const bookingState = useSelector((state: { booking: BookingState }) => state.booking);
 
   const currentHoverID = bookingState.currentHoverID;
@@ -46,7 +48,7 @@ const Map: FC<MapProps> = ({ center, listings }) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors '
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {listings.map((item: StayDataType) => (
+      {listing?.map((item: StayDataType) => (
         <NumberMarker
           key={item.id}
           position={[item.map.lat, item.map.lng]}
@@ -54,6 +56,30 @@ const Map: FC<MapProps> = ({ center, listings }) => {
           isHovered={item.id === currentHoverID}
           isSelected={currentHoverID === item.id}
           listing={item}
+          id={item?.id}
+        >
+        </NumberMarker>
+      ))}
+      {experiences?.map((item: ExperiencesDataType) => (
+        <NumberMarker
+          key={item.id}
+          position={[item.map.lat, item.map.lng]}
+          number={item?.price}
+          isHovered={item.id === currentHoverID}
+          isSelected={currentHoverID === item.id}
+          experiences={item}
+          id={item?.id}
+        >
+        </NumberMarker>
+      ))}
+      {car?.map((item: CarDataType) => (
+        <NumberMarker
+          key={item.id}
+          position={[item.map.lat, item.map.lng]}
+          number={item?.price}
+          isHovered={item.id === currentHoverID}
+          isSelected={currentHoverID === item.id}
+          car={item}
           id={item?.id}
         >
         </NumberMarker>

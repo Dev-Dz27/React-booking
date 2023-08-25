@@ -105,8 +105,10 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
   useEffect(() => {
     // Simulate data retrieval from JSON file using the listingId
     const fetchedListing = DEMO_STAY_LISTINGS.find(
+      
       (listing) => listing.id === listingId // Removed Number() conversion
-    );
+      );
+    // console.log(DEMO_STAY_LISTINGS)
 
     setListing(fetchedListing);
   }, [listingId]);

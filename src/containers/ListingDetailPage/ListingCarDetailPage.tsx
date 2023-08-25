@@ -1,9 +1,9 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import LocationMarker from "components/AnyReactComponent/LocationMarker";
 import CommentListing from "components/CommentListing/CommentListing";
 import FiveStartIconForRate from "components/FiveStartIconForRate/FiveStartIconForRate";
-import { DateRage } from "data/types"; 
+import { CarDataType, DateRage } from "data/types"; 
 import StartRating from "components/StartRating/StartRating";
 import GoogleMapReact from "google-map-react";
 import useWindowSize from "hooks/useWindowResize";
@@ -36,6 +36,8 @@ import carUtilities8 from "images/carUtilities/8.png";
 import RentalCarDatesRangeInput from "components/HeroSearchForm/RentalCarDatesRangeInput";
 import { TimeRage } from "components/HeroSearchForm/RentalCarSearchForm";
 import MobileFooterSticky from "./MobileFooterSticky";
+import { useParams } from "react-router-dom";
+import { DEMO_CAR_LISTINGS } from "data/listings";
 
 export interface ListingCarDetailPageProps {
   className?: string;
@@ -82,6 +84,18 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openFocusIndex, setOpenFocusIndex] = useState(0);
+
+  const { carId } = useParams<{ carId: string }>();
+  const [listing, setListing] = useState<CarDataType | undefined | null>(null);
+
+  // useEffect(() => {
+  //   // Simulate data retrieval from JSON file using the carId
+  //   const fetchedListing = DEMO_CAR_LISTINGS.find(
+  //     (car) => car.id === carId // Removed Number() conversion
+  //   );
+
+  //   setListing(fetchedListing);
+  // }, [carId]);
 
   // USE STATE
   const [dateRangeValue, setDateRangeValue] = useState<DateRage>({

@@ -84,7 +84,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
               />
             </div> */}
 
-            <Map center={DEMO_STAYS[0].map} listings={DEMO_STAYS} />
+            <Map center={DEMO_STAYS[0].map} listing={DEMO_STAYS} />
           </div>
         </div>
       </div>

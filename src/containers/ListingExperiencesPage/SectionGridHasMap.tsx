@@ -7,15 +7,26 @@ import TabFilters from "./TabFilters";
 import Heading2 from "components/Heading/Heading2";
 import ExperiencesCardH from "components/ExperiencesCardH/ExperiencesCardH";
 import Map from "components/ReactLeaflet/Map";
+import { useDispatch } from "react-redux";
+import { setCurrentHoverID } from "features/bookingSlice";
 
 const DEMO_EXPERIENCES = DEMO_EXPERIENCES_LISTINGS.filter((_, i) => i < 12);
 
 export interface SectionGridHasMapProps {}
 
 const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
-  const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
   const [showFullMapFixed, setShowFullMapFixed] = useState(false);
 
+
+  const dispatch = useDispatch();
+
+  const handleMouseEnter = (itemId: string | number) => {
+    dispatch(setCurrentHoverID(itemId));
+  };
+
+  const handleMouseLeave = () => {
+    dispatch(setCurrentHoverID(-1));
+  };
   return (
     <div>
       <div className="relative flex min-h-screen">
@@ -39,8 +50,8 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             {DEMO_EXPERIENCES.map((item) => (
               <div
                 key={item.id}
-                onMouseEnter={() => setCurrentHoverID((_) => item.id)}
-                onMouseLeave={() => setCurrentHoverID((_) => -1)}
+                onMouseEnter={() => handleMouseEnter(item.id)}
+                onMouseLeave={handleMouseLeave}
               >
                 <ExperiencesCardH data={item} />
               </div>
@@ -83,7 +94,7 @@ const SectionGridHasMap: FC<SectionGridHasMapProps> = () => {
             {/* BELLOW IS MY GOOGLE API KEY -- PLEASE DELETE AND TYPE YOUR API KEY */}
 
 
-            <Map center={DEMO_EXPERIENCES[0].map} listings={DEMO_EXPERIENCES} />
+            <Map center={DEMO_EXPERIENCES[0].map} experiences={DEMO_EXPERIENCES} />
 
           </div>
         </div>

@@ -19,6 +19,7 @@ const DEMO_DATA = DEMO_STAY_LISTINGS[0];
 const StayCard: FC<StayCardProps> = ({
   size = "default",
   className = "",
+  // data = DEMO_DATA,
   data = DEMO_DATA,
 }) => {
   const {
@@ -36,7 +37,6 @@ const StayCard: FC<StayCardProps> = ({
     reviewCount,
     id,
   } = data;
-
   const renderSliderGallery = () => {
     return (
       <div className="relative w-full">

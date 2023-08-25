@@ -1,10 +1,12 @@
 import L from "leaflet";
-import { Marker, Popup,   } from "react-leaflet";
-import { useState, Fragment, FC, } from "react";
-import 'leaflet/dist/leaflet.css';
+import { Marker, Popup } from "react-leaflet";
+import { useState, Fragment, FC } from "react";
+import "leaflet/dist/leaflet.css";
 import StayCard from "../StayCard/StayCard";
 import { Transition } from "@headlessui/react";
-import { StayDataType } from "data/types";
+import { CarDataType, ExperiencesDataType, StayDataType } from "data/types";
+import CarCard from "components/CarCard/CarCard";
+import ExperiencesCard from "components/ExperiencesCard/ExperiencesCard";
 
 export interface NumberMarkerProps {
   className?: string;
@@ -14,6 +16,8 @@ export interface NumberMarkerProps {
   isHovered?: boolean;
   isSelected?: boolean;
   listing?: StayDataType;
+  experiences?: ExperiencesDataType;
+  car?: CarDataType;
   id?: string | number;
   children?: React.ReactNode;
 }
@@ -25,11 +29,11 @@ const NumberMarker: FC<NumberMarkerProps> = ({
   isHovered,
   isSelected,
   listing,
+  experiences,
+  car,
   id,
 }) => {
-  const [currentHoverID, setCurrentHoverID] = useState<string | number>(-1);
   const [isOpen, setIsOpen] = useState(true);
-
 
   const icon = L.divIcon({
     html: `
@@ -50,19 +54,13 @@ const NumberMarker: FC<NumberMarkerProps> = ({
     // iconAnchor: [15, 15], // Center the marker on the provided position
   });
 
-
   return (
     <div
       className={`nc-AnyReactComponent relative  ${className}`}
       data-nc-id="AnyReactComponent"
     >
-      <Marker 
-      position={position} icon={icon}
-      >
-
-
-        <Popup closeButton={false}
-        >
+      <Marker position={position} icon={icon}>
+        <Popup closeButton={false}>
           <Transition
             show={isOpen}
             as={Fragment}
@@ -76,7 +74,15 @@ const NumberMarker: FC<NumberMarkerProps> = ({
             <div className="absolute z-50 bottom-full pb-3 -left-12 w-[260px] aspect-w-1">
               {listing && (
                 <StayCard size="small" data={listing} className="shadow-2xl" />
-              )}{" "}
+              )}
+              {experiences && (
+            <ExperiencesCard
+              size="small"
+              data={experiences}
+              className="shadow-2xl bg-white dark:bg-neutral-900 pt-3 px-3 rounded-3xl"
+            />
+          )}
+               {car && <CarCard size="small" data={car} className="shadow-2xl " />}
             </div>
           </Transition>
         </Popup>
