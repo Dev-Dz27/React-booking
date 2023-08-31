@@ -1,11 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
-import LocationMarker from "components/AnyReactComponent/LocationMarker";
 import CommentListing from "components/CommentListing/CommentListing";
 import FiveStartIconForRate from "components/FiveStartIconForRate/FiveStartIconForRate";
-import { CarDataType, DateRage } from "data/types"; 
+import { CarDataType, DateRage } from "data/types";
 import StartRating from "components/StartRating/StartRating";
-import GoogleMapReact from "google-map-react";
 import useWindowSize from "hooks/useWindowResize";
 import moment from "moment";
 import {
@@ -38,6 +36,13 @@ import { TimeRage } from "components/HeroSearchForm/RentalCarSearchForm";
 import MobileFooterSticky from "./MobileFooterSticky";
 import { useParams } from "react-router-dom";
 import { DEMO_CAR_LISTINGS } from "data/listings";
+import "leaflet/dist/leaflet.css";
+import { LatLngTuple } from "leaflet";
+import { useDispatch, useSelector } from "react-redux";
+import { closeModal, openModal, setDateRange,  } from "features/bookingSlice";
+import CustomMarker from "components/ReactLeaflet/CustomMarker";
+import { MapContainer, TileLayer } from "react-leaflet";
+import calculateTotal from "utils/calculateTotal";
 
 export interface ListingCarDetailPageProps {
   className?: string;
@@ -82,33 +87,76 @@ const Amenities_demos = [
 const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
   className = "",
 }) => {
+  const { carId } = useParams<{ carId: string }>();
+  const [car, setCar] = useState<CarDataType | undefined | null>(null);
+
+  useEffect(() => {
+    // Simulate data retrieval from JSON file using the carId
+    const fetchedCar = DEMO_CAR_LISTINGS.find(
+      (car) => car.id === carId // Removed Number() conversion
+    );
+
+    setCar(fetchedCar);
+  }, [carId]);
+
+  const {
+    address,
+    author,
+    title,
+    reviewCount,
+    reviewStart,
+    date,
+    price,
+    galleryImgs,
+    listingCategory,
+    featuredImage,
+    seats,
+    gearshift,
+    map,
+  } = car ?? {};
+
+  const position: LatLngTuple = [map?.lat ?? 0, map?.lng ?? 0];
   const [isOpen, setIsOpen] = useState(false);
   const [openFocusIndex, setOpenFocusIndex] = useState(0);
 
-  const { carId } = useParams<{ carId: string }>();
-  const [listing, setListing] = useState<CarDataType | undefined | null>(null);
-
-  // useEffect(() => {
-  //   // Simulate data retrieval from JSON file using the carId
-  //   const fetchedListing = DEMO_CAR_LISTINGS.find(
-  //     (car) => car.id === carId // Removed Number() conversion
-  //   );
-
-  //   setListing(fetchedListing);
-  // }, [carId]);
-
   // USE STATE
-  const [dateRangeValue, setDateRangeValue] = useState<DateRage>({
-    startDate: moment(),
-    endDate: moment().add(4, "days"),
-  });
-  const [timeRangeValue, setTimeRangeValue] = useState<TimeRage>({
-    startTime: "10:00 AM",
-    endTime: "10:00 AM",
-  });
-
+  
   const [focusedInputSectionCheckDate, setFocusedInputSectionCheckDate] =
     useState<FocusedInputShape>("startDate");
+
+  
+  const bookingState = useSelector((state: any) => state.booking);
+  const selectedDate = bookingState.dateRange;
+
+  const [dateRangeValue, setDateRangeValue] = useState<DateRage>(
+    // startDate: moment(),
+    // endDate: moment().add(4, "days"),
+    bookingState.dateRange
+  );
+  // Calculate the timeRangeValue based on bookingState.dateRange
+  const startDate = bookingState.dateRange.startDate;
+  const endDate = bookingState.dateRange.endDate;
+  const startTime = startDate ? moment(startDate).format("hh:mm A") : "";
+  const endTime = endDate ? moment(endDate).format("hh:mm A") : "";
+  const [timeRangeValue, setTimeRangeValue] = useState<TimeRage>({
+    startTime, endTime 
+  });
+
+  const numberOfDays =
+    startDate && endDate ? endDate.diff(startDate, "days") : 0;
+
+    // Format the selected start and end dates
+const formattedStartDate = selectedDate.startDate
+? moment(selectedDate.startDate).format("dddd, MMMM D · HH:mm")
+: "";
+const formattedEndDate = selectedDate.endDate
+? moment(selectedDate.endDate).format("dddd, MMMM D · HH:mm")
+: "";
+
+  // Redux Toolkit
+
+  const dispatch = useDispatch();
+  // Redux Toolkit
 
   const windowSize = useWindowSize();
 
@@ -132,6 +180,22 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
 
   const handleCloseModal = () => setIsOpen(false);
 
+  // Matterport
+  // const [showModal, setShowModal] = useState(false);
+  const showModal = bookingState.showModal;
+
+  const HandleshowModal = () => {
+    // setShowModal(true);
+    dispatch(openModal());
+  };
+
+  const HideModal = () => {
+    //   setShowModal(false);
+    dispatch(closeModal());
+  };
+
+  
+
   const renderSection1 = () => {
     return (
       <div className="listingSection__wrap !space-y-6">
@@ -143,26 +207,31 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
 
         {/* 2 */}
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
-          BMW 3 Series Sedan
+          {title && title}
         </h2>
 
         {/* 3 */}
         <div className="flex items-center space-x-4">
-          <StartRating />
+          <StartRating reviewCount={reviewCount} reviewStart={reviewStart} />
           <span>·</span>
           <span>
             <i className="las la-map-marker-alt"></i>
-            <span className="ml-1"> Tokyo, Jappan</span>
+            <span className="ml-1"> {address && address}</span>
           </span>
         </div>
 
         {/* 4 */}
         <div className="flex items-center">
-          <Avatar hasChecked sizeClass="h-10 w-10" radius="rounded-full" />
+          <Avatar
+            author={author}
+            hasChecked
+            sizeClass="h-10 w-10"
+            radius="rounded-full"
+          />
           <span className="ml-2.5 text-neutral-500 dark:text-neutral-400">
             Car owner{" "}
             <span className="text-neutral-900 dark:text-neutral-200 font-medium">
-              Kevin Francis
+              {author?.displayName}
             </span>
           </span>
         </div>
@@ -174,11 +243,11 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
         <div className="flex items-center justify-between xl:justify-start space-x-8 xl:space-x-12 text-sm text-neutral-700 dark:text-neutral-300">
           <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 text-center sm:text-left sm:space-x-3 ">
             <i className="las la-user-friends text-2xl"></i>
-            <span className="">4 seats</span>
+            <span className="">{seats && seats} seats</span>
           </div>
           <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 text-center sm:text-left sm:space-x-3 ">
             <i className="las la-dharmachakra text-2xl"></i>
-            <span className=""> Auto gearbox</span>
+            <span className=""> {gearshift && gearshift}</span>
           </div>
           <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 text-center sm:text-left sm:space-x-3 ">
             <i className="las la-suitcase text-2xl"></i>
@@ -280,9 +349,9 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
         <div className="listingSection__wrap__DayPickerRangeController flow-root">
           <div className="-mx-4 sm:mx-auto xl:mx-[-22px]">
             <DayPickerRangeController
-              startDate={dateRangeValue.startDate}
-              endDate={dateRangeValue.endDate}
-              onDatesChange={(date) => setDateRangeValue(date)}
+              startDate={selectedDate.startDate}
+              endDate={selectedDate.endDate}
+              onDatesChange={(date) => dispatch(setDateRange(date))}
               focusedInput={focusedInputSectionCheckDate}
               onFocusChange={(focusedInput) =>
                 setFocusedInputSectionCheckDate(focusedInput || "startDate")
@@ -290,14 +359,14 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
               initialVisibleMonth={null}
               numberOfMonths={windowSize.width < 1280 ? 1 : 2}
               daySize={getDaySize()}
-              hideKeyboardShortcutsPanel
+              hideKeyboardShortcutsPanel={false}
               isOutsideRange={(day) => !isInclusivelyAfterDay(day, moment())}
             />
           </div>
         </div>
 
         {/*  */}
-        <div className="flex space-x-8">
+        {/* <div className="flex space-x-8">
           <div className="w-1/2 space-y-2">
             <label className="font-medium" htmlFor="startTime">
               Pick up time:
@@ -321,7 +390,7 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
               onChange={(e) => console.log(e)}
             />
           </div>
-        </div>
+        </div> */}
       </div>
     );
   };
@@ -336,6 +405,7 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
         {/* host */}
         <div className="flex items-center space-x-4">
           <Avatar
+            author={author}
             hasChecked
             hasCheckedClass="w-4 h-4 -top-0.5 right-0.5"
             sizeClass="h-14 w-14"
@@ -343,12 +413,16 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
           />
           <div>
             <a className="block text-xl font-medium" href="##">
-              Kevin Francis
+              {author?.displayName}
             </a>
             <div className="mt-1.5 flex items-center text-sm text-neutral-500 dark:text-neutral-400">
-              <StartRating />
+              <StartRating
+                reviewCount={reviewCount}
+                reviewStart={reviewStart}
+              />
               <span className="mx-2">·</span>
-              <span> 12 places</span>
+              <span> {author?.count} places</span>{" "}
+              {/* possibly: replace places with cars */}
             </div>
           </div>
         </div>
@@ -377,7 +451,7 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <span>Joined in March 2016</span>
+            <span>Joined in March {date && date}</span>
           </div>
           <div className="flex items-center space-x-3">
             <svg
@@ -429,7 +503,9 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
     return (
       <div className="listingSection__wrap">
         {/* HEADING */}
-        <h2 className="text-2xl font-semibold">Reviews (23 reviews)</h2>
+        <h2 className="text-2xl font-semibold">
+          Reviews ({reviewCount} reviews)
+        </h2>
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700"></div>
 
         {/* Content */}
@@ -458,7 +534,7 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
           <CommentListing className="py-8" />
           <CommentListing className="py-8" />
           <div className="pt-8">
-            <ButtonSecondary>View more 20 reviews</ButtonSecondary>
+            <ButtonSecondary>View more {reviewCount} reviews</ButtonSecondary>
           </div>
         </div>
       </div>
@@ -472,29 +548,40 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
         <div>
           <h2 className="text-2xl font-semibold">Location</h2>
           <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
-            San Diego, CA, United States of America (SAN-San Diego Intl.)
+            {/* San Diego, CA, United States of America (SAN-San Diego Intl.) */}
+            {address && address}
           </span>
         </div>
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700" />
 
         {/* MAP */}
-        <div className="aspect-w-5 aspect-h-5 sm:aspect-h-3">
-          <div className="rounded-xl overflow-hidden">
-            <GoogleMapReact
-              bootstrapURLKeys={{
-                key: "AIzaSyAGVJfZMAKYfZ71nzL_v5i3LjTTWnCYwTY",
-              }}
-              yesIWantToUseGoogleMapApiInternals
-              defaultZoom={15}
-              defaultCenter={{
-                lat: 55.9607277,
-                lng: 36.2172614,
-              }}
+        {!showModal && (
+          <div className="aspect-w-5 aspect-h-5 sm:aspect-h-3">
+            <div
+              className="rounded-xl 
+          overflow-hidden
+          "
             >
-              <LocationMarker lat={55.9607277} lng={36.2172614} />
-            </GoogleMapReact>
+              <MapContainer
+                style={{ height: "100vh" }}
+                center={position}
+                zoom={9}
+                scrollWheelZoom={true}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors '
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+
+                <CustomMarker
+                  key={car?.id}
+                  position={position}
+                  color="blue"
+                ></CustomMarker>
+              </MapContainer>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     );
   };
@@ -536,12 +623,12 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
         {/* PRICE */}
         <div className="flex justify-between">
           <span className="text-3xl font-semibold">
-            $19
+            {price && price}
             <span className="ml-1 text-base font-normal text-neutral-500 dark:text-neutral-400">
               /day
             </span>
           </span>
-          <StartRating />
+          <StartRating reviewCount={reviewCount} reviewStart={reviewStart} />
         </div>
 
         {/* FORM */}
@@ -565,14 +652,14 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
         {/* SUM */}
         <div className="flex flex-col space-y-4 ">
           <div className="flex justify-between text-neutral-6000 dark:text-neutral-300">
-            <span>$19 x 3 day</span>
-            <span>$57</span>
+            <span>    {price && price } x {numberOfDays && numberOfDays}</span>
+            <span> {price ? `$${calculateTotal(price, numberOfDays)}` : "N/A"}</span>
           </div>
 
           <div className="border-b border-neutral-200 dark:border-neutral-700"></div>
           <div className="flex justify-between font-semibold">
             <span>Total</span>
-            <span>$199</span>
+            <span> {price ? `$${calculateTotal(price, numberOfDays)}` : "N/A"}</span>
           </div>
         </div>
 
@@ -597,18 +684,21 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
           <div className="ml-4 space-y-14 text-sm">
             <div className="flex flex-col space-y-2">
               <span className=" text-neutral-500 dark:text-neutral-400">
-                Monday, August 12 · 10:00
+                {/* Monday, August 12 · 10:00 */}
+                {formattedStartDate && formattedStartDate}
               </span>
               <span className=" font-semibold">
-                Saint Petersburg City Center
+                {/* Saint Petersburg City Center  */} {/* //TODO: add pickup location dynimacally */}
               </span>
             </div>
             <div className="flex flex-col space-y-2">
               <span className=" text-neutral-500 dark:text-neutral-400">
-                Monday, August 16 · 10:00
+                {/* Monday, August 16 · 10:00 */}
+                {formattedEndDate && formattedEndDate}
+
               </span>
               <span className=" font-semibold">
-                Saint Petersburg City Center
+                {/* Saint Petersburg City Center */} {/* //TODO: add drop off location dynimacally */}
               </span>
             </div>
           </div>
@@ -633,13 +723,13 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
               <NcImage
                 containerClassName="absolute inset-0"
                 className="object-cover w-full h-full rounded-md sm:rounded-xl"
-                src={PHOTOS[0]}
+                src={galleryImgs?.[0]}
               />
               <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
             </div>
 
             {/*  */}
-            <div
+            {/* <div
               className="col-span-1 row-span-2 relative rounded-md sm:rounded-xl overflow-hidden cursor-pointer"
               onClick={() => handleOpenModal(1)}
             >
@@ -649,16 +739,20 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
                 src={PHOTOS[1]}
               />
               <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
-            </div>
+            </div> */}
 
             {/*  */}
-            {PHOTOS.filter((_, i) => i >= 2 && i < 4).map((item, index) => (
-              <div
-                key={index}
-                className={`relative rounded-md sm:rounded-xl overflow-hidden ${
-                  index >= 2 ? "block" : ""
-                }`}
-              >
+            {galleryImgs?.map(
+              (
+                item,
+                index // Use galleryImgs instead of PHOTOS
+              ) => (
+                <div
+                  key={index}
+                  className={`relative rounded-md sm:rounded-xl overflow-hidden ${
+                    index >= 3 ? "hidden sm:block" : ""
+                  }`}
+                >
                 <NcImage
                   containerClassName="aspect-w-4 aspect-h-3"
                   className="object-cover w-full h-full rounded-md sm:rounded-xl "
@@ -699,7 +793,7 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
         </header>
         {/* MODAL PHOTOS */}
         <ModalPhotos
-          imgs={PHOTOS}
+          imgs={galleryImgs}
           isOpen={isOpen}
           onClose={handleCloseModal}
           initFocus={openFocusIndex}

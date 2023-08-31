@@ -37,7 +37,7 @@ import {
   closeModal,
 } from "features/bookingSlice";
 import { useParams } from "react-router-dom";
-import { DEMO_STAY_LISTINGS } from "./../../data/listings";
+import { DEMO_STAY_LISTINGS } from "data/listings";
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -131,7 +131,6 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
     map /* other properties */,
   } = listing ?? {};
 
-  console.log(matterportURL);
   const position: LatLngTuple = [map?.lat ?? 0, map?.lng ?? 0];
 
   const [isOpen, setIsOpen] = useState(false);
@@ -208,7 +207,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
 
         {/* 2 */}
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold">
-          {title}
+        {title && title}
         </h2>
 
         {/* Modal */}
@@ -244,7 +243,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
           <span>·</span>
           <span>
             <i className="las la-map-marker-alt"></i>
-            <span className="ml-1">{address}</span>
+            <span className="ml-1">{address && address}</span>
           </span>
         </div>
 
@@ -272,25 +271,25 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
           <div className="flex items-center space-x-3 ">
             <i className=" las la-user text-2xl "></i>
             <span className="">
-              {maxGuests} <span className="hidden sm:inline-block">guests</span>
+              {maxGuests && maxGuests} <span className="hidden sm:inline-block">guests</span>
             </span>
           </div>
           <div className="flex items-center space-x-3">
             <i className=" las la-bed text-2xl"></i>
             <span className=" ">
-              {bedrooms} <span className="hidden sm:inline-block">beds</span>
+              {bedrooms && bedrooms} <span className="hidden sm:inline-block">beds</span>
             </span>
           </div>
           <div className="flex items-center space-x-3">
             <i className=" las la-bath text-2xl"></i>
             <span className=" ">
-              {bathrooms} <span className="hidden sm:inline-block">baths</span>
+              {bathrooms && bathrooms} <span className="hidden sm:inline-block">baths</span>
             </span>
           </div>
           <div className="flex items-center space-x-3">
             <i className=" las la-door-open text-2xl"></i>
             <span className=" ">
-              {bedrooms}{" "}
+              {bedrooms && bedrooms}{" "}
               <span className="hidden sm:inline-block">bedrooms</span>
             </span>
           </div>
@@ -565,7 +564,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
             </svg>
-            <span>Joined in {date}</span>
+            <span>Joined in {date && date}</span>
           </div>
           <div className="flex items-center space-x-3">
             <svg
@@ -648,7 +647,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
           <CommentListing className="py-8" />
           <CommentListing className="py-8" />
           <div className="pt-8">
-            <ButtonSecondary>View more {reviewCount} reviews</ButtonSecondary>
+            <ButtonSecondary>View more {reviewCount && reviewCount} reviews</ButtonSecondary>
           </div>
         </div>
       </div>
@@ -666,7 +665,8 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
         <div>
           <h2 className="text-2xl font-semibold">Location</h2>
           <span className="block mt-2 text-neutral-500 dark:text-neutral-400">
-            San Diego, CA, United States of America (SAN-San Diego Intl.)
+            {/* San Diego, CA, United States of America (SAN-San Diego Intl.) */}
+            { address && address}
           </span>
         </div>
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700" />
@@ -764,7 +764,7 @@ const ListingStayDetailPage: FC<ListingStayDetailPageProps> = ({
         PRICE
         <div className="flex justify-between">
           <span className="text-3xl font-semibold">
-            {price}
+            {price && price}
             <span className="ml-1 text-base font-normal text-neutral-500 dark:text-neutral-400">
               /night
             </span>

@@ -75,7 +75,9 @@ export const pages: Page[] = [
   //
   { path: "/listing-car", component: ListingCarPage },
   { path: "/listing-car-map", component: ListingCarMapPage },
-  { path: "/listing-car-detail", component: ListingCarDetailPage },
+  // { path: "/listing-car-detail", component: ListingCarDetailPage },
+  { path: "/cars/:carId", component: ListingCarDetailPage },
+
   //
   { path: "/listing-real-estate-map", component: ListingRealEstateMapPage },
   { path: "/listing-real-estate", component: ListingRealEstatePage },

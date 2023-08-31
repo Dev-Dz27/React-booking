@@ -3,15 +3,14 @@
     "id": "9824dd51-14bc-4a05-ba7d-1ca3c3c08bd7",
     "authorId": 5,
     "date": "May 20, 2021",
-    "href": "/listing-car-detail",
+    "href": "/cars/carsListing_0_",
     "listingCategoryId": 10,
     "title": "KONA Electric",
     "featuredImage": "https://shop.vinfastauto.com/on/demandware.static/-/Sites-app_vinfast_vn-Library/default/dwc1e10094/images/vfast/Hinh-anh-Thong-so-xe-VinFast-Fadil-cac-mau.png",
     "galleryImgs": [
       "https://shop.vinfastauto.com/on/demandware.static/-/Sites-app_vinfast_vn-Library/default/dwc1e10094/images/vfast/Hinh-anh-Thong-so-xe-VinFast-Fadil-cac-mau.png",
-      "",
-      "",
-      ""
+      "https://shop.vinfastauto.com/on/demandware.static/-/Sites-app_vinfast_vn-Library/default/dwc1e10094/images/vfast/Hinh-anh-Thong-so-xe-VinFast-Fadil-cac-mau.png",
+      "https://shop.vinfastauto.com/on/demandware.static/-/Sites-app_vinfast_vn-Library/default/dwc1e10094/images/vfast/Hinh-anh-Thong-so-xe-VinFast-Fadil-cac-mau.png"
     ],
     "commentCount": 17,
     "viewCount": 97,
@@ -30,7 +29,7 @@
     "id": "12a181b6-114c-45fa-a0cf-f4285bc7d952",
     "authorId": 7,
     "date": "May 20, 2021",
-    "href": "/listing-car-detail",
+    "href": "/cars/carsListing_1_",
     "listingCategoryId": 18,
     "title": "KONA Electric",
     "featuredImage": "https://shop.vinfastauto.com/on/demandware.static/-/Sites-app_vinfast_vn-Library/default/dwc1e10094/images/vfast/Hinh-anh-Thong-so-xe-VinFast-Fadil-cac-mau.png",

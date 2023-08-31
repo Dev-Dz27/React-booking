@@ -13,6 +13,8 @@ import useWindowSize from "hooks/useWindowResize";
 import ButtonSubmit from "./ButtonSubmit";
 import { PathName } from "routers/types";
 import useNcId from "hooks/useNcId";
+import { useDispatch } from "react-redux";
+import { setDateRange } from "features/bookingSlice";
 
 type Fields = "pickUp" | "dropOff";
 
@@ -50,6 +52,7 @@ const RentalCarDatesRangeInput: FC<RentalCarDatesRangeInputProps> = ({
   const [stateTimeRage, setStateTimeRage] = useState(defaultTimeValue);
   const startDateId = useNcId();
   const endDateId = useNcId();
+  const dispatch = useDispatch();
   //
   useEffect(() => {
     setStateDate(defaultDateValue);
@@ -285,10 +288,16 @@ const RentalCarDatesRangeInput: FC<RentalCarDatesRangeInputProps> = ({
           startDate={stateDate.startDate}
           endDate={stateDate.endDate}
           focusedInput={focusedInput}
+          // onDatesChange={(date) => {
+          //   setStateDate(date);
+          //   onChange && onChange({ stateDate: date, stateTimeRage });
+          // }}
           onDatesChange={(date) => {
             setStateDate(date);
+            dispatch(setDateRange(date)); // Dispatch the action here
             onChange && onChange({ stateDate: date, stateTimeRage });
           }}
+          
           onFocusChange={handleDateFocusChange}
           startDateId={startDateId}
           endDateId={endDateId}
