@@ -129,8 +129,6 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
   const selectedDate = bookingState.dateRange;
 
   const [dateRangeValue, setDateRangeValue] = useState<DateRage>(
-    // startDate: moment(),
-    // endDate: moment().add(4, "days"),
     bookingState.dateRange
   );
   // Calculate the timeRangeValue based on bookingState.dateRange
@@ -181,7 +179,6 @@ const formattedEndDate = selectedDate.endDate
   const handleCloseModal = () => setIsOpen(false);
 
   // Matterport
-  // const [showModal, setShowModal] = useState(false);
   const showModal = bookingState.showModal;
 
   const HandleshowModal = () => {
@@ -542,6 +539,10 @@ const formattedEndDate = selectedDate.endDate
   };
 
   const renderSection7 = () => {
+    if (!map) {
+      // Position data not available, render a loading state or something else
+      return <p>Loading map...</p>;
+    }
     return (
       <div className="listingSection__wrap">
         {/* HEADING */}
@@ -555,7 +556,7 @@ const formattedEndDate = selectedDate.endDate
         <div className="w-14 border-b border-neutral-200 dark:border-neutral-700" />
 
         {/* MAP */}
-        {!showModal && (
+        {/* {!showModal && ( */}
           <div className="aspect-w-5 aspect-h-5 sm:aspect-h-3">
             <div
               className="rounded-xl 
@@ -581,7 +582,7 @@ const formattedEndDate = selectedDate.endDate
               </MapContainer>
             </div>
           </div>
-        )}
+         {/* )} */}
       </div>
     );
   };
