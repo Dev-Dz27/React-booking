@@ -145,10 +145,10 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
 
     // Format the selected start and end dates
 const formattedStartDate = selectedDate.startDate
-? moment(selectedDate.startDate).format("dddd, MMMM D · HH:mm")
+? moment(selectedDate.startDate).format("dddd, MMMM D ") 
 : "";
 const formattedEndDate = selectedDate.endDate
-? moment(selectedDate.endDate).format("dddd, MMMM D · HH:mm")
+? moment(selectedDate.endDate).format("dddd, MMMM D ")
 : "";
 
   // Redux Toolkit
@@ -191,7 +191,6 @@ const formattedEndDate = selectedDate.endDate
     dispatch(closeModal());
   };
 
-  
 
   const renderSection1 = () => {
     return (

@@ -216,7 +216,7 @@ const RentalCarDatesRangeInput: FC<RentalCarDatesRangeInputProps> = ({
                 ? stateDate.startDate.format("DD MMM")
                 : "Pick up"}
             </span>
-            {stateDate.startDate && renderEditTime("pickUp")}
+            {/* {stateDate.startDate && renderEditTime("pickUp")} */}
           </div>
 
           <span className="block mt-1 text-sm text-neutral-400 font-light leading-none">
@@ -261,7 +261,7 @@ const RentalCarDatesRangeInput: FC<RentalCarDatesRangeInputProps> = ({
                   ? stateDate.endDate.format("DD MMM")
                   : "Drop off"}
               </span>
-              {stateDate.endDate && renderEditTime("dropOff")}
+              {/* {stateDate.endDate && renderEditTime("dropOff")} */}
             </div>
             <span className="block mt-1 text-sm text-neutral-400 font-light leading-none">
               {stateDate.endDate ? "Drop off" : `Add date`}
