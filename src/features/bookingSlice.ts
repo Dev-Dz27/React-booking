@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import moment from "moment";
-import { DateRage } from "data/types";
+import { CarDataType, DateRage } from "data/types";
 
 // Define the initial state of the booking component
 
@@ -12,6 +12,7 @@ interface BookingState {
     guestChildren: number;
     guestInfants: number;
   };
+  selectedCar: CarDataType | undefined | null,
   // hoverId
   currentHoverID: string | number;
   showModal: boolean;
@@ -28,6 +29,8 @@ const initialState: BookingState = {
     guestChildren: 2,
     guestInfants: 1,
   },
+  //Selected Car
+  selectedCar: null,
   // hoverId
   currentHoverID: -1,
   showModal: false,
@@ -51,6 +54,10 @@ const bookingSlice = createSlice({
     setGuests(state, action: PayloadAction<BookingState["guests"]>) {
       state.guests = action.payload;
     },
+        // Selected Car
+    setSelectedCar(state, action: PayloadAction<CarDataType| undefined | null>) {
+      state.selectedCar = action.payload;
+    },
     // hoverId
     setCurrentHoverID(state, action: PayloadAction<string | number>) {
       state.currentHoverID = action.payload;
@@ -72,6 +79,7 @@ export const {
   setLocation,
   setDateRange,
   setGuests,
+  setSelectedCar,
   setCurrentHoverID,
   openModal,
   closeModal,

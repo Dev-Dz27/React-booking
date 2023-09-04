@@ -30,6 +30,7 @@ export interface LocationStates {
 
   //
   "/checkout"?: {};
+  "/book/cars/:carId"?: {};
   "/pay-done"?: {};
   //
   "/account"?: {};

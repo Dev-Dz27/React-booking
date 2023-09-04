@@ -39,10 +39,12 @@ import { DEMO_CAR_LISTINGS } from "data/listings";
 import "leaflet/dist/leaflet.css";
 import { LatLngTuple } from "leaflet";
 import { useDispatch, useSelector } from "react-redux";
-import { closeModal, openModal, setDateRange,  } from "features/bookingSlice";
+import { closeModal, openModal, setDateRange, setSelectedCar } from "features/bookingSlice";
 import CustomMarker from "components/ReactLeaflet/CustomMarker";
 import { MapContainer, TileLayer } from "react-leaflet";
 import calculateTotal from "utils/calculateTotal";
+import { RootState } from "features/store";
+import { calculateNumberOfDays, formatDate } from "utils/dateUtils";
 
 export interface ListingCarDetailPageProps {
   className?: string;
@@ -107,8 +109,6 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
     reviewStart,
     date,
     price,
-    galleryImgs,
-    listingCategory,
     featuredImage,
     seats,
     gearshift,
@@ -140,16 +140,18 @@ const ListingCarDetailPage: FC<ListingCarDetailPageProps> = ({
     startTime, endTime 
   });
 
-  const numberOfDays =
-    startDate && endDate ? endDate.diff(startDate, "days") : 0;
+  const numberOfDays = calculateNumberOfDays(selectedDate.startDate, selectedDate.endDate);
 
     // Format the selected start and end dates
-const formattedStartDate = selectedDate.startDate
-? moment(selectedDate.startDate).format("dddd, MMMM D ") 
-: "";
-const formattedEndDate = selectedDate.endDate
-? moment(selectedDate.endDate).format("dddd, MMMM D ")
-: "";
+// const formattedStartDate = selectedDate.startDate
+// ? moment(selectedDate.startDate).format("dddd, MMMM D ") 
+// : "";
+const formattedStartDate = formatDate(selectedDate.startDate);
+
+// const formattedEndDate = selectedDate.endDate
+// ? moment(selectedDate.endDate).format("dddd, MMMM D ")
+// : "";
+const formattedEndDate = formatDate(selectedDate.endDate);
 
   // Redux Toolkit
 
@@ -178,17 +180,13 @@ const formattedEndDate = selectedDate.endDate
 
   const handleCloseModal = () => setIsOpen(false);
 
-  // Matterport
-  const showModal = bookingState.showModal;
 
-  const HandleshowModal = () => {
-    // setShowModal(true);
-    dispatch(openModal());
-  };
 
-  const HideModal = () => {
-    //   setShowModal(false);
-    dispatch(closeModal());
+  // When the user selects a car
+  const handleReserveClick = () => {
+    // Assuming you have the car data in the 'car' variable
+    dispatch(setSelectedCar(car));
+    // Redirect to the checkout page
   };
 
 
@@ -664,7 +662,9 @@ const formattedEndDate = selectedDate.endDate
         </div>
 
         {/* SUBMIT */}
-        <ButtonPrimary href={"/checkout"}>Reserve</ButtonPrimary>
+        <ButtonPrimary 
+        href={`/book/cars/${carId}`} 
+        onClick={handleReserveClick} >Reserve</ButtonPrimary>
       </div>
     );
   };
@@ -723,7 +723,8 @@ const formattedEndDate = selectedDate.endDate
               <NcImage
                 containerClassName="absolute inset-0"
                 className="object-cover w-full h-full rounded-md sm:rounded-xl"
-                src={galleryImgs?.[0]}
+                // src={galleryImgs?.[0]}
+                src={featuredImage}
               />
               <div className="absolute inset-0 bg-neutral-900 bg-opacity-20 opacity-0 hover:opacity-100 transition-opacity"></div>
             </div>
@@ -742,7 +743,7 @@ const formattedEndDate = selectedDate.endDate
             </div> */}
 
             {/*  */}
-            {galleryImgs?.map(
+            {PHOTOS.filter((_, i) => i >= 1 && i < 4).map(
               (
                 item,
                 index // Use galleryImgs instead of PHOTOS
@@ -793,7 +794,7 @@ const formattedEndDate = selectedDate.endDate
         </header>
         {/* MODAL PHOTOS */}
         <ModalPhotos
-          imgs={galleryImgs}
+          imgs={PHOTOS}
           isOpen={isOpen}
           onClose={handleCloseModal}
           initFocus={openFocusIndex}

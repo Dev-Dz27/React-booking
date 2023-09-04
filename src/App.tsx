@@ -7,6 +7,7 @@ import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
 const store = configureStore({
   reducer: {
     booking: bookingReducer,
+    // selectedBooking: selectedBookingReducer,
   },
   // to fix the problem from redux-persist. redux-toolkit
   middleware: (getDefaultMiddleware) =>
